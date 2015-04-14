@@ -25,8 +25,13 @@ var qrcode = function() {
    * qrcode
    * @param typeNumber 1 to 40
    * @param errorCorrectLevel 'L','M','Q','H'
+   * @param customPadding optional custom padding configuration.  Keys:
+   *    data_offset_bytes: offset within QR data to start custom padding
+   *    mask_override: code number of QR mask pattern to force
+   *    random_seed: string to seed random number generator
+   *    pad_bytes: array of custom padding bytes
    */
-  var qrcode = function(typeNumber, errorCorrectLevel) {
+  var qrcode = function(typeNumber, errorCorrectLevel, customPadding) {
 
     var PAD0 = 0xEC;
     var PAD1 = 0x11;
@@ -362,22 +367,39 @@ var qrcode = function() {
       }
 
       // padding
-      while (buffer.getLengthInBits() % 8 != 0) {
-        buffer.putBit(false);
-      }
-
-      // padding
-      while (true) {
-
-        if (buffer.getLengthInBits() >= totalDataCount * 8) {
-          break;
+      if (customPadding) {
+        var random = new Math.seedrandom(customPadding.random_seed);
+        while (buffer.getLengthInBits() % 8 != 0) {
+          buffer.putBit(random() > 0.5);
         }
-        buffer.put(PAD0, 8);
-
-        if (buffer.getLengthInBits() >= totalDataCount * 8) {
-          break;
+        var pad_bytes = customPadding.pad_bytes.slice(0);
+        if (buffer.getLengthInBits() > customPadding.data_offset_bytes * 8) {
+          console.log('WARNING: data length exceeds custom padding offset');
         }
-        buffer.put(PAD1, 8);
+        while (buffer.getLengthInBits() < totalDataCount * 8) {
+          if (buffer.getLengthInBits() >= customPadding.data_offset_bytes * 8
+              && pad_bytes.length) {
+            buffer.put(pad_bytes.shift(), 8);
+          } else {
+            buffer.put(Math.round(random() * 255), 8);
+          }
+        }
+      } else {
+        while (buffer.getLengthInBits() % 8 != 0) {
+          buffer.putBit(0);
+        }
+        while (true) {
+
+          if (buffer.getLengthInBits() >= totalDataCount * 8) {
+            break;
+          }
+          buffer.put(PAD0, 8);
+
+          if (buffer.getLengthInBits() >= totalDataCount * 8) {
+            break;
+          }
+          buffer.put(PAD1, 8);
+        }
       }
 
       return createBytes(buffer, rsBlocks);
@@ -401,7 +423,8 @@ var qrcode = function() {
     };
 
     _this.make = function() {
-      makeImpl(false, getBestMaskPattern() );
+      makeImpl(false,
+          customPadding ? customPadding.mask_override : getBestMaskPattern());
     };
 
     _this.createTableTag = function(cellSize, margin) {
