@@ -144,7 +144,7 @@
             </p>
             <a ng-hide="true" ng-href="3d.html#{{firebase_token}}" id="remote_link"></a>
             <div id="remote_qrcode"></div>
-            <a ng-href="{{short_remote_link}}">{{short_remote_link}}</a>
+            <a ng-href="{{short_remote_link}}" target="_blank">{{short_remote_link}}</a>
           </div>
           <div class="buttons">
             <button type="button" class="btn btn-default" ng-click="wizard_step = steps.INPUT">{{data.connections ? "Continue" : "Skip"}} &gt;</button>
@@ -409,14 +409,14 @@
           </div>
           <div class="panel-body">
             <p>
-              Before using this profile for your viewer, please <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf">download and thoroughly read the QR viewer profile usage guidelines (PDF)</a>. The information in these guidelines will help you to understand the appropriate use of the generated viewer profile, and learn about do's and don'ts when developing marketing, packaging and other materials for your viewer.
+              Before using this profile for your viewer, please <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" target="_blank">download and thoroughly read the QR viewer profile usage guidelines (PDF) <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>. The information in these guidelines will help you to understand the appropriate use of the generated viewer profile, and learn about do's and don'ts when developing marketing, packaging and other materials for your viewer.
             </p>
           </div>
         </div>
 
         <div class="buttons">
           <button type="button" class="btn btn-default pull-left" ng-click="wizard_step = steps.INPUT">&lt; Previous</button>
-          <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" class="btn btn-primary pull-right" role="button">Download the PDF guidelines</a>
+          <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" target="_blank" class="btn btn-primary pull-right" role="button">Download the PDF guidelines</a>
           <div class="clearfix"></div>
         </div>
       </div>

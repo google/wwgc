@@ -9,6 +9,8 @@ with different optics, inputs or dimensions.
 [Open the running version of the tool](https://www.google.com/get/cardboard/viewerprofilegenerator.html)
 or read the [user guide](docs/HELP.md) for more information.
 
+<img src="docs/images/wwgc_screenshot.png">
+
 Development
 ========================
 

@@ -220,7 +220,7 @@ one eye at a time).
   * <strong>Incorrect tray to lens-center distance</strong>: when viewing in your VR headset, the lens center markers appear not centered
 vertically.
 
-  <img src="images/lens-unequal.png" width="349">
+  <img src="images/lens-unequal.png" width="382">
 
  If this is the case, re-measure the tray to lens-center distance
 on your physical viewer, and make sure that you have chosen a correct "Screen
@@ -270,7 +270,7 @@ are straight.
 the field of view when viewing the scene in the VR headset.
 
   <img src="images/incorrect_coeff-1.png" width="419">
-  <img src="images/incorrect_coeff-2.png" width="461">
+  <img src="images/incorrect_coeff-2.png" width="419">
 
 #### Advanced viewer parameters
 
@@ -300,11 +300,13 @@ Cardboard-compatible applications.
 
 <img src="images/QR-preview.png" width="390">
 
-Open the Google Cardboard app, select "Configuration" menu option, click on
+Open the Google Cardboard app, select "Settings" menu option, click on
 "Switch viewer" and scan the generated QR code.
 
-<img src="images/cardboard_app.png" width="221">
-<img src="images/default_viewer.png" width="221">
+<img src="images/cardboard_app.png" width="200">
+<img src="images/default_viewer.png" width="200">
+<img src="images/viewer_scanning.png" width="200">
+<img src="images/names_configured.png" width="200">
 
 If the profile generation went well, all of the Google Cardboard apps should
 now be adapted to work perfectly in your new VR viewer!
