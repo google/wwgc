@@ -1,0 +1,61 @@
+<!--
+ Copyright 2015 Google Inc. All Rights Reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Cardboard viewer profile generator: 3D view</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        margin: 0px;
+        overflow: hidden;
+      }
+      #example {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="example"></div>
+
+  <script src="//cdn.firebase.com/js/client/2.1.1/firebase.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/screenfull.js/2.0.0/screenfull.min.js"></script>
+  <script src="//wurfl.io/wurfl.js"></script>
+  <script src="js/wakelock.js"></script>
+  <script src="js/third-party/ByteBufferAB.min.js"></script>
+  <script src="js/third-party/ProtoBuf.min.js"></script>
+  <script src="js/third-party/threejs/shaders/CopyShader.js"></script>
+  <script src="js/third-party/threejs/postprocessing/EffectComposer.js"></script>
+  <script src="js/third-party/threejs/postprocessing/ShaderPass.js"></script>
+  <script src="js/third-party/threejs/postprocessing/MaskPass.js"></script>
+  <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
+  <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
+  <script src="js/Cardboard.js"></script>
+  <script src="js/CardboardView.js"></script>
+  <script src="js/CardboardStereoEffect.js"></script>
+  <script src="js/CardboardBarrelDistortion.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/3d_app.js"></script>
+
+  </body>
+</html>

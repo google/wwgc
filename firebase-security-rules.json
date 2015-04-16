@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "users": {
+      // * users can only write to data in their path when authenticated
+      // * global, read-only access for any user
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}
