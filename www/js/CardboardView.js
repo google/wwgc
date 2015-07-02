@@ -16,7 +16,7 @@
 
  "use strict";
 
- /* globals: CARDBOARD, WURFL, THREE */
+ /*globals document, window, CARDBOARD, WURFL, THREE*/
 
  CARDBOARD.CardboardView = function(screen_params, device_params) {
   this.screen = screen_params;
@@ -55,7 +55,7 @@ CARDBOARD.CardboardView.prototype = {
       right:    Math.min(innerAngle, maxFov[1]),
       bottom:   Math.min(bottomAngle, maxFov[3]),
       top:      Math.min(topAngle, maxFov[2]),
-    }
+    };
   },
 
   getLeftEyeFovAndViewportNoDistortionCorrection: function() {
@@ -143,16 +143,13 @@ CARDBOARD.getYEyeOffsetMeters = function(screen_params, device_params) {
   var VerticalAlignmentType =
   CARDBOARD.DeviceParams.VerticalAlignmentType;
   switch (device_params.vertical_alignment) {
-    default:
-    case VerticalAlignmentType.CENTER:
-    return screen_params.height_meters / 2;
     case VerticalAlignmentType.BOTTOM:
-    return device_params.tray_to_lens_distance -
-    screen_params.border_size_meters;
+      return device_params.tray_to_lens_distance - screen_params.border_size_meters;
     case VerticalAlignmentType.TOP:
-    return screen_params.height_meters -
-    (device_params.tray_to_lens_distance -
-      screen_params.border_size_meters);
+      return screen_params.height_meters -
+        (device_params.tray_to_lens_distance - screen_params.border_size_meters);
+    default:  // VerticalAlignmentType.CENTER
+      return screen_params.height_meters / 2;
   }
 };
 
@@ -260,57 +257,6 @@ CARDBOARD.SCREEN_PPI_BY_DEVICE = {
   'Samsung Galaxy S5':          [ 432, /\(Galaxy S5\)/ ],
 };
 
-// Plan for deducing display properties:
-//   * use map from vendor/model to database of resolution + density
-//   * otherwise prompt user for info and store in cookie
-// TODO: move fallback / cookie access out of this library
-CARDBOARD.findScreenParams = function() {
-  var ppi;
-  var ppi_entry = CARDBOARD.SCREEN_PPI_BY_DEVICE[WURFL.complete_device_name];
-  if (ppi_entry) {
-    ppi = ppi_entry[0];
-    console.log('Detected', WURFL.complete_device_name);
-  } else {
-    // try regex match
-    for (var device_name in CARDBOARD.SCREEN_PPI_BY_DEVICE) {
-      var ppi_entry = CARDBOARD.SCREEN_PPI_BY_DEVICE[device_name];
-      if (ppi_entry.length > 1 &&
-        WURFL.complete_device_name.match(ppi_entry[1])) {
-        ppi = ppi_entry[0];
-      console.log('Detected', device_name);
-      break;
-    }
-  }
-}
-if (WURFL.is_mobile) {
-  if (!ppi) {
-    console.log('Mobile device display properties unknown:',
-      WURFL.complete_device_name);
-    ppi = Number(_readCookie('ppi'));
-    if (ppi > 0) {
-      console.log('PPI from cookie:', ppi);
-    } else {
-      ppi = Number(window.prompt("Mobile device display properties " +
-        "unknown. Enter pixels per inch (PPI) value of your device:"));
-      if (ppi > 0) {
-        _createCookie(window.location.pathname, 'ppi', ppi, 9999);
-      } else {
-        ppi = 300;
-      }
-    }
-  }
-  var screen_width = Math.max(window.screen.width, window.screen.height) *
-  window.devicePixelRatio;
-  var screen_height = Math.min(window.screen.width, window.screen.height) *
-  window.devicePixelRatio;
-  return new CARDBOARD.ScreenParams(screen_width, screen_height, ppi,
-    0.003 /*bezel height*/);
-} else {
-    // generic values for desktop
-    return new CARDBOARD.ScreenParams(1920, 1080, 445, 0);
-  }
-};
-
 function _createCookie(path, name, value, days) {
   var date = new Date();
   date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -322,14 +268,65 @@ function _createCookie(path, name, value, days) {
 function _readCookie(name) {
   var nameEQ = name + "=";
   var ca = document.cookie.split(';');
-  for (var i=0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
+  var i, c;
+  for (i=0; i < ca.length; i++) {
+    c = ca[i];
+    while (c.charAt(0) === ' ') {
       c = c.substring(1, c.length);
     }
-    if (c.indexOf(nameEQ) == 0) {
+    if (c.indexOf(nameEQ) === 0) {
       return c.substring(nameEQ.length, c.length);
     }
   }
   return null;
 }
+
+// Plan for deducing display properties:
+//   * use map from vendor/model to database of resolution + density
+//   * otherwise prompt user for info and store in cookie
+// TODO: move fallback / cookie access out of this library
+CARDBOARD.findScreenParams = function() {
+  var ppi, device_name;
+  var ppi_entry = CARDBOARD.SCREEN_PPI_BY_DEVICE[WURFL.complete_device_name];
+  if (ppi_entry) {
+    ppi = ppi_entry[0];
+    console.log('Detected', WURFL.complete_device_name);
+  } else {
+    // try regex match
+    for (device_name in CARDBOARD.SCREEN_PPI_BY_DEVICE) {
+      ppi_entry = CARDBOARD.SCREEN_PPI_BY_DEVICE[device_name];
+      if (ppi_entry.length > 1 &&
+        WURFL.complete_device_name.match(ppi_entry[1])) {
+        ppi = ppi_entry[0];
+        console.log('Detected', device_name);
+        break;
+      }
+    }
+  }
+  if (WURFL.is_mobile) {
+    if (!ppi) {
+      console.log('Mobile device display properties unknown:',
+        WURFL.complete_device_name);
+      ppi = Number(_readCookie('ppi'));
+      if (ppi > 0) {
+        console.log('PPI from cookie:', ppi);
+      } else {
+        ppi = Number(window.prompt("Mobile device display properties " +
+          "unknown. Enter pixels per inch (PPI) value of your device:"));
+        if (ppi > 0) {
+          _createCookie(window.location.pathname, 'ppi', ppi, 9999);
+        } else {
+          ppi = 300;
+        }
+      }
+    }
+    var screen_width = Math.max(window.screen.width, window.screen.height) *
+    window.devicePixelRatio;
+    var screen_height = Math.min(window.screen.width, window.screen.height) *
+    window.devicePixelRatio;
+    return new CARDBOARD.ScreenParams(screen_width, screen_height, ppi,
+      0.003 /*bezel height*/);
+  }
+  // generic values for desktop
+  return new CARDBOARD.ScreenParams(1920, 1080, 445, 0);
+};

@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+'use strict';
+
+/*global document, window, navigator, screen*/
+
 (function() {
   function AndroidWakeLock() {
     var video = document.createElement('video');
@@ -35,7 +39,7 @@
     };
   }
 
-  function iOSWakeLock() {
+  function IOSWakeLock() {
     var timer = null;
 
     this.request = function() {
@@ -45,24 +49,23 @@
           setTimeout(window.stop, 0);
         }, 30000);
       }
-    }
+    };
 
     this.release = function() {
       if (timer) {
         clearInterval(timer);
         timer = null;
       }
-    }
+    };
   }
 
   function getWakeLock() {
     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
     if (userAgent.match(/iPhone/i) || userAgent.match(/iPod/i)) {
-      return new iOSWakeLock();
-    } else {
-      return new AndroidWakeLock();
+      return new IOSWakeLock();
     }
+    return new AndroidWakeLock();
   }
 
   screen.wakelock = getWakeLock();
-})();
+}());

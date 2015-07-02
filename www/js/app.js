@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 
- /* global: angular, Firebase, gapi, qrcode, Snap, WURFL, CARDBOARD, CONFIG */
+/*global alert, btoa, confirm, window, document, XMLSerializer,
+  angular, Firebase, gapi, qrcode, Snap, WURFL, CARDBOARD, CONFIG, ga*/
 
- var QR_PIXELS_PER_CELL = 3;
+var QR_PIXELS_PER_CELL = 3;
 
 // For QR type 5, 32 characters of usable data.
 var PARAM_QR_CUSTOM_PADDING = {
@@ -36,11 +37,96 @@ var PARAM_QR_CUSTOM_PADDING = {
   0x60, 0x60, 0x66, 0x60, 0x4d, 0x46, 0xad, 0x51,
   0xcc, 0xcd, 0x99, 0xcc, 0xcd, 0x85,
   ],
+};
+
+var HELPER_PARAMETER_MODAL = {
+  'vendor': {
+    focus: 'vendor',
+    title: 'Enter your company\'s name',
+    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'model': {
+    focus: 'vendor',
+    title: 'Enter viewer name. It will be visible to users.',
+    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'primary_button': {
+    focus: 'vendor',
+    title: 'Primary Button&nbsp;Type',
+    content: '<p><em>None</em> if your device has no inputs and the smartphone screen is not accessible or if your device has a separate Bluetooth controller and no other built&#45;in&nbsp;inputs.</p><p><em>Touch</em> if your device has no inputs, but the user can touch the screen with his/her finger without taking the phone out of the&nbsp;viewer.</p><p><em>Indirect Touch</em> if your device has a mechanical input which is ultimately registered as a screen touch, but the user&rsquo;s finger is not touching the screen&nbsp;directly.</p><p><em>Magnet</em> if your device has a Google Cardboard&#45;like magnetic&nbsp;input.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'screen_to_lens_distance': {
+    focus: 'vendor',
+    title: 'Screen to lens distance&nbsp;(mm)',
+    content: '<img src="images/screen-to-lens.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable focal distance, measure the average distance between the screen and the&nbsp;lenses.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'inter_lens_distance': {
+    focus: 'vendor',
+    title: 'Inter&#45;lens distance&nbsp;(mm)',
+    content: '<img src="images/interlens-distance.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable inter-lens distance, measure the average distance between the screen and the&nbsp;lenses. </p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'vertical_alignment': {
+    focus: 'vendor',
+    title: 'Screen vertical&nbsp;alignment',
+    content: '<p><strong>Note:</strong> Indicate if the smartphone screen is aligned to the top, bottom or center of your viewer when the smartphone is inserted. For most viewers, this should be set to BOTTOM.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'tray_to_lens_distance': {
+    focus: 'vendor',
+    title: 'Tray to lens&#45;center distance&nbsp;(mm)',
+    content: '<p><strong>Bottom:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.BOTTOM" class="img-responsive" width="596" height="423" src="images/tray_to_lens_distance_bottom.png" alt=" " /><p><strong>Top:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.TOP" class="img-responsive" width="597" height="425" src="images/tray_to_lens_distance_top.png" alt=" " /></p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'distortion_coefficients': {
+    focus: 'vendor',
+    title: 'Distortion Coefficients',
+    content: '<p>View the lens calibration VR scene which appears on your smartphone. Adjust the data until the vertical lines appear straight and angles appear right (90 degrees) through your viewer&nbsp;lenses.</p><div class="hide-in-modal"><p>This is the current lens curvature for your distortion&nbsp;coefficients:</p><p class="text-center"><div id="canvas-container"><canvas id="distortion_plot" width="140" height="280" style="width:auto; height: 100%;"></canvas></div></p></div><p><strong>Note:</strong> distortion coefficients should not be left set to 0.00 for any curved lens.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'left_eye_field_of_view_angles': {
+    focus: 'vendor',
+    title: 'Field-of-view angle',
+    content: '<p>Enter the field-of-view angles for your left lens. For most viewers these fields should be set to 50 degrees or&nbsp;more.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+  'has_magnet': {
+    focus: 'vendor',
+    title: 'Embeded Magnets',
+    content: '<p>Select this checkbox if your viewer has at least one embedded magnet. Doing so will inform all apps built using the Cardboard SDKs that the smartphone&rsquo;s magnetometer should not be&nbsp;used.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+  },
+};
+
+function showAxes(ctx,axes) {
+  var x0=axes.x0, h=ctx.canvas.height;
+  var y0=axes.y0, w=ctx.canvas.width;
+  var xmin = axes.doNegativeX ? 0 : x0;
+  ctx.beginPath();
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgb(128,128,128)";
+  ctx.moveTo(y0,xmin); ctx.lineTo(y0,h);  // X axis
+  ctx.moveTo(0,x0);    ctx.lineTo(w,x0);  // Y axis
+  ctx.stroke();
+}
+
+function funGraph(ctx,axes,func,color,thick) {
+  var i, xx, yy, dx=2, x0=axes.x0, y0=axes.y0;
+  var xscale=axes.xscale, yscale=axes.yscale;
+  var iMax = Math.round((ctx.canvas.height-x0)/dx);
+  var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+  ctx.beginPath();
+  ctx.lineWidth = thick;
+  ctx.strokeStyle = color;
+
+  for (i=iMin;i<=iMax;i++) {
+    xx = dx*i; yy = yscale*func(xx/xscale);
+    if (i===iMin) {
+      ctx.moveTo(y0-yy,x0+xx);
+    } else {
+      ctx.lineTo(y0-yy,x0+xx);
+    }
+  }
+  ctx.stroke();
 }
 
 function distortionPlot(k1, k2) {
   var canvas = document.getElementById("distortion_plot");
-  var ctx=canvas.getContext("2d");
+  var ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   var axes = {
@@ -58,41 +144,12 @@ function distortionPlot(k1, k2) {
   }, "rgb(255,110,64)", 2);
 }
 
-function funGraph(ctx,axes,func,color,thick) {
-  var xx, yy, dx=2, x0=axes.x0, y0=axes.y0;
-  var xscale=axes.xscale, yscale=axes.yscale;
-  var iMax = Math.round((ctx.canvas.height-x0)/dx);
-  var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
-  ctx.beginPath();
-  ctx.lineWidth = thick;
-  ctx.strokeStyle = color;
-
-  for (var i=iMin;i<=iMax;i++) {
-    xx = dx*i; yy = axes.yscale*func(xx/axes.xscale);
-    if (i==iMin) ctx.moveTo(y0-yy,x0+xx);
-    else         ctx.lineTo(y0-yy,x0+xx);
-  }
-  ctx.stroke();
-}
-
-function showAxes(ctx,axes) {
-  var x0=axes.x0, h=ctx.canvas.height;
-  var y0=axes.y0, w=ctx.canvas.width;
-  var xmin = axes.doNegativeX ? 0 : x0;
-  ctx.beginPath();
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgb(128,128,128)";
-  ctx.moveTo(y0,xmin); ctx.lineTo(y0,h);  // X axis
-  ctx.moveTo(0,x0);    ctx.lineTo(w,x0);  // Y axis
-  ctx.stroke();
-}
-
 function makeQr(minType, correctionLevel, text, customPadding) {
-  var type = minType;
+  var qr, type = minType;
   // TODO: something more efficient than trial & error
   while (true) {
     try {
-      var qr = qrcode(type, correctionLevel, customPadding);
+      qr = qrcode(type, correctionLevel, customPadding);
       qr.addData(text);
       qr.make();
       return qr;
@@ -127,7 +184,7 @@ function svgFromImage(img, imgScale) {
   // 8-bit RGBA pixel array from top-left to bottom-right
   var pixels = canvas_context.getImageData(0, 0, width, height).data;
   var x, y;
-  var svg = Snap(width, height);
+  var svg = new Snap(width, height);
   // Snap library annoyingly assumes we want the element appended to document
   svg.node.parentNode.removeChild(svg.node);
   svg.rect(0, 0, width, height).attr({fill: 'white'});
@@ -142,23 +199,125 @@ function svgFromImage(img, imgScale) {
   return svg.node;
 }
 
+function areArraysEqual(arr1, arr2) {
+  var i;
+  if (arr1 === arr2) {
+    return true;
+  }
+  if (arr1 === null || arr2 === null || arr1.length !== arr2.length) {
+    return false;
+  }
+  for (i = 0; i < arr1.length; ++i) {
+    if(arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function initGapi() {
+  // TODO: remove this busywait hack (i.e. where we keep calling ourself until
+  // angular module init overrides the function).
   window.initGapi();
 }
 
+if (CONFIG.GOOGLE_ANALYTICS_ID) {
+  ga('create', CONFIG.GOOGLE_ANALYTICS_ID, 'auto');
+}
+// note this error handler will be overridden during angular module init
+window.onerror = function(message, file, line, col, error) {
+  ga('send', 'exception', {
+    'exDescription': error ? error.stack : message,
+    'exFatal': true});
+};
+
 angular
-.module('myApp', ['firebase', 'ui.bootstrap', 'ngAnimate'])
+.module('myApp', ['firebase', 'ui.bootstrap', 'ngAnimate', 'ngMaterial', 'ngScrollSpy'])
 
-.controller('ModalCtrl', function ($scope, $modal) {
-  $scope.open = function () {
+.config(function($mdThemingProvider) {
+  $mdThemingProvider.definePalette('cardboard-orange', {
+    '50': 'ff6e40',
+    '100': 'ff6e40',
+    '200': 'ff6e40',
+    '300': 'ff6e40',
+    '400': 'ff6e40',
+    '500': 'ff6e40',
+    '600': 'ff6e40',
+    '700': 'ff6e40',
+    '800': 'ff6e40',
+    '900': 'ff6e40',
+    'A100': 'ff6e40',
+    'A200': 'ff6e40',
+    'A400': 'ff6e40',
+    'A700': 'ff6e40',
+    'contrastDefaultColor': 'light',
+    'contrastDarkColors': ['50', '100', '200', '300', '400', 'A100'],
+    'contrastLightColors': undefined
+  });
 
-    var modalInstance = $modal.open({
-      templateUrl: 'compatibleSmartphones.html',
-      controller: 'ModalInstanceCtrl',
-      size: 'lg',
-    });
+  $mdThemingProvider.definePalette('cardboard-blue', {
+    '50': '4787f1',
+    '100': '4787f1',
+    '200': '4787f1',
+    '300': '4787f1',
+    '400': '4787f1',
+    '500': '4787f1',
+    '600': '4787f1',
+    '700': '4787f1',
+    '800': '4787f1',
+    '900': '4787f1',
+    'A100': '4787f1',
+    'A200': '4787f1',
+    'A400': '4787f1',
+    'A700': '4787f1',
+    'contrastDefaultColor': 'light',
+    'contrastDarkColors': ['50', '100', '200', '300', '400', 'A100'],
+    'contrastLightColors': undefined
+  });
+
+  $mdThemingProvider.theme('default')
+  .primaryPalette('cardboard-orange', {
+        'default': '800', // by default use shade 400 from the pink palette for primary intentions
+        'hue-1': '100', // use shade 100 for the <code>md-hue-1</code> class
+        'hue-2': '600', // use shade 600 for the <code>md-hue-2</code> class
+        'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+      })
+  .accentPalette('cardboard-blue');})
+
+.animation('.slide-margin', function($animateCss) {
+  var animation = {
+    enter : function(element, done) {
+      var animator = $animateCss(element, {
+        from: {
+          maxHeight: '0vh'
+        },
+        to: {
+          maxHeight: '100vh'
+        },
+        duration: 0.75
+      });
+      animator.start().finally(done);
+    },
+    leave : function(element, done) {
+      var animator = $animateCss(element, {
+        from: {
+          maxHeight: '100vh'
+        },
+        to: {
+          maxHeight: '0vh'
+        },
+        duration: 0.3
+      });
+      animator.start().finally(done);
+    },
+    move : function(element, done) {
+    },
+    addClass : function(element, className, done) {
+    },
+    removeClass : function(element, className, done) {
+    }
   };
-})
+  return animation;})
 
 .controller('ModalInstanceCtrl', function ($scope, $modalInstance) {
   $scope.ok = function () {
@@ -166,8 +325,18 @@ angular
   };
 })
 
-.controller('myController', ['$scope', '$firebase', '$timeout', '$q', '$window',
-  function($scope, $firebase, $timeout, $q, $window) {
+.controller('ModalCtrl', function ($scope, $modal) {
+  $scope.open = function () {
+    $modal.open({
+      templateUrl: 'compatibleSmartphones.html',
+      controller: 'ModalInstanceCtrl',
+      size: 'lg',
+    });
+  };
+})
+
+.controller('myController', ['$scope', '$firebase', '$timeout', '$q', '$window', '$mdDialog',
+  function($scope, $firebase, $timeout, $q, $window, $mdDialog) {
     var firebase_root = new Firebase(CONFIG.FIREBASE_URL);
 
     var gapiDefer = $q.defer();
@@ -179,7 +348,7 @@ angular
         gapi.client.load('urlshortener', 'v1').then(function() {
           gapiDefer.resolve();
         });
-      }
+      };
 
       // Returns promise for shortUrl string.
       var getShortUrl = function(longUrl) {
@@ -195,7 +364,7 @@ angular
             });
           });
         });
-      }
+      };
 
       var updateParamQr = function() {
         var qr_div = document.getElementById('params_qrcode');
@@ -215,18 +384,81 @@ angular
             });
           });
         });
-      }
+      };
+
+      $scope.alert = '';
+
+      $scope.showDetailsModal = function(ev) {
+        $mdDialog.show({
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          parent: angular.element(document.body),
+          ok: 'Got it!',
+          ariaLabel: HELPER_PARAMETER_MODAL[$scope.focus].title,
+          title: HELPER_PARAMETER_MODAL[$scope.focus].title,
+          template: '<md-dialog>' +
+                    '<md-toolbar>' +
+                    '<div class="md-toolbar-tools">' +
+                    '<h2>' + HELPER_PARAMETER_MODAL[$scope.focus].title + '</h2>' +
+                    '<span flex></span>' +
+                    '</div>' +
+                    '</md-toolbar>' +
+                    '<md-dialog-content>' +
+                    HELPER_PARAMETER_MODAL[$scope.focus].content +
+                    '</md-dialog-content>' +
+                    '</md-dialog>',
+        }).then(function(answer) {
+        }, function() {
+        });
+      };
 
       var DeviceParams = CARDBOARD.DeviceParams;
 
-      $scope.steps = { WELCOME: 0, INPUT: 1, OUTPUT: 2};
+      $scope.steps = { WELCOME: 0, OUTPUT: 1};
       $scope.wizard_step = $scope.steps.WELCOME;
 
+      $scope.helper_sections = HELPER_PARAMETER_MODAL;
+
       $scope.vertical_alignment_type = DeviceParams.VerticalAlignmentType;
+      $scope.vertical_alignment_type_options = [{
+          id: DeviceParams.VerticalAlignmentType.BOTTOM,
+          text: 'Bottom',
+          id_attribute: 'vertical_alignment_none',
+      }, {
+          id: DeviceParams.VerticalAlignmentType.CENTER,
+          text: 'Center',
+          id_attribute: 'vertical_alignment_magnet',
+      }, {
+          id: DeviceParams.VerticalAlignmentType.TOP,
+          text: 'Top',
+          id_attribute: 'vertical_alignment_touch',
+      }];
+
+
       $scope.button_type = DeviceParams.ButtonType;
+      $scope.button_type_options = [{
+          id: DeviceParams.ButtonType.NONE,
+          id_attribute: 'primary_button_none',
+          text: 'None',
+      }, {
+          id: DeviceParams.ButtonType.MAGNET,
+          id_attribute: 'primary_button_magnet',
+          text: 'Magnet',
+      }, {
+          id: DeviceParams.ButtonType.TOUCH,
+          id_attribute: 'primary_button_touch',
+          text: 'Touch',
+      }, {
+          id: DeviceParams.ButtonType.INDIRECT_TOUCH,
+          id_attribute: 'primary_button_indirect_touch',
+          text: 'Indirect Touch',
+      }];
+
 
       $scope.alerts = [];
       $scope.focus = null;
+
+      $scope.isAdvancedExpanded = false;
 
       $scope.is_mobile = WURFL.is_mobile;
 
@@ -238,24 +470,19 @@ angular
         // Ensure tray_to_lens_distance has nominal value for best-effort
         // support of apps using older revsion of params proto.
         // TODO: reference a defaults singleton
+
         if ($scope.params.vertical_alignment ===
           DeviceParams.VerticalAlignmentType.CENTER) {
           $scope.params.tray_to_lens_distance = 0.035;
       }
-        // Restore defaults for fields hidden behind "advanced" mode
-        if (!$scope.data.is_advanced) {
-          angular.extend($scope.params, {
-            "left_eye_field_of_view_angles": [50, 50, 50, 50],
-          });
-          $scope.params.has_magnet = false;
-        }
         // Magnet button implies has_magnet
-        if ($scope.params.primary_button === DeviceParams.ButtonType.MAGNET) {
+        if ($scope.params.primary_button === DeviceParams.ButtonType.MAGNET ) {
           $scope.params.has_magnet = true;
           $scope.has_magnet_field_enabled = false;
         } else {
           $scope.has_magnet_field_enabled = true;
         }
+
         $scope.data.update_timestamp = Firebase.ServerValue.TIMESTAMP;
         $scope.data.params_uri = CARDBOARD.paramsToUri($scope.params);
         $scope.data.$save();
@@ -265,18 +492,42 @@ angular
           $scope.params.distortion_coefficients[1]);
       };
 
-      // When panel with parm QR is opened, generate the QR.  We do this
-      // lazily since it employs the URL shortener service.
+      // true if current settings have non-default "advanced" field values
+      var hasAdvancedSettings = function() {
+        return ($scope.params !== undefined)
+            && (!areArraysEqual($scope.params.left_eye_field_of_view_angles, [50, 50, 50, 50])
+                || ($scope.params.has_magnet === true
+                    && $scope.params.primary_button !== DeviceParams.ButtonType.MAGNET));
+      };
+
       $scope.$watch('wizard_step', function(value) {
-        if (value == $scope.steps.OUTPUT) {
-          updateParamQr();
+        var virtual_page;
+        switch (value) {
+          case $scope.steps.OUTPUT:
+            // Let user know when modifications to advanced fields are hidden.
+            if (hasAdvancedSettings() && !$scope.isAdvancedExpanded
+                && !confirm("It looks like you changed some of the advanced fields, but they're currently hidden. \n\nDo you want to generate your profile?")) {
+              $scope.wizard_step = $scope.steps.WELCOME;
+              return;
+            }
+            // Generate the QR.  We do this lazily since it employs the URL
+            // shortener service.
+            updateParamQr();
+            virtual_page = window.location.pathname + 'qr_output';
+            break;
+          case $scope.steps.WELCOME:
+            virtual_page = window.location.pathname + 'form';
+            break;
         }
+        $scope.isAdvancedExpanded = hasAdvancedSettings();
+        ga('set', 'page', virtual_page);
+        ga('send', 'pageview');
       });
 
       $scope.reset = function() {
         $scope.params = {
-          "vendor": "Your company",
-          "model": "Your model",
+          "vendor": "",
+          "model": "",
           "screen_to_lens_distance": 0.042,
           "inter_lens_distance": 0.060,
           "vertical_alignment": DeviceParams.VerticalAlignmentType.BOTTOM,
@@ -286,21 +537,26 @@ angular
           "has_magnet": false,
           "primary_button": DeviceParams.ButtonType.NONE,
         };
+
+        $scope.isAdvancedExpanded = false;
         $scope.save();
+      };
+
+      $scope.saveOrLoadParameters = {
+        open: false
       };
 
       // Called when user changes params URI input field.
       $scope.set_params_uri = function() {
-        var params = CARDBOARD.uriToParams($scope.data.params_uri);
-        if (params) {
-          $scope.params = params;
-          // infer "advanced mode" based on values
-          $scope.data.is_advanced =
-          (params.primary_button != DeviceParams.ButtonType.MAGNET &&
-            params.has_magnet == true) ||
-          (params.left_eye_field_of_view_angles.toString() !=
-            [50, 50, 50, 50].toString());
+        if ($scope.data.params_uri === '') {
           $scope.save();
+        } else {
+          var params = CARDBOARD.uriToParams($scope.data.params_uri);
+          if (params) {
+            $scope.params = params;
+            $scope.save();
+            $scope.isAdvancedExpanded = hasAdvancedSettings();
+          }
         }
       };
 
@@ -356,17 +612,16 @@ angular
             firebase_user.child('connections').on('value', function(connections) {
               if (connections.val()) {
                 if ($scope.allow_auto_advance &&
-                  $scope.wizard_step == $scope.steps.WELCOME) {
-                  $scope.wizard_step = $scope.steps.INPUT;
+                  $scope.wizard_step === $scope.steps.WELCOME) {
+                  $scope.wizard_step = $scope.steps.WELCOME;
               }
               $scope.allow_auto_advance = false;
             } else {
               $scope.allow_auto_advance = true;
-            };
+            }
           });
           } else {
             console.log("Logged out of Firebase.");
-            $scope.firebase_uid = null;
           }
         });
 });
@@ -376,6 +631,9 @@ angular
   $provide.decorator("$exceptionHandler", ['$delegate', function($delegate) {
     return function(exception, cause) {
       $delegate(exception, cause);
+      ga('send', 'exception', {
+        'exDescription': exception.stack || exception.message,
+        'exFatal': true});
       alert("An error has occurred.\n\n" + exception.message);
     };
   }]);
@@ -387,6 +645,27 @@ angular
     /^\s*((https?|ftp|mailto|tel|file):|data:image\/)/);
 }])
 
+.filter('raw_html', ['$sce', function($sce){
+  return function(val) {
+    return $sce.trustAsHtml(val);
+  };
+}])
+
+// Validation for zero distortion coefficients
+.directive('ngNonZero', 
+  function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function($scope, $elem, $attrs, ngModel) {
+        $scope.$watch($attrs.ngModel, function(value) {
+          var isValid = (value !== 0);
+          ngModel.$setValidity($attrs.ngModel, isValid);
+        });
+      }
+    };
+  })
+
 // Scale model-to-view by given factor and vice versa.
 .directive('myScale',
   function() {
@@ -394,7 +673,7 @@ angular
       restrict: 'A',
       require: 'ngModel',
       link: function(scope, elem, attrs, ngModel) {
-        var scale = parseInt(attrs.myScale);
+        var scale = parseInt(attrs.myScale, 10);
         // model-to-view
         ngModel.$formatters.push(
           function(val) {
@@ -406,7 +685,9 @@ angular
         ngModel.$parsers.push(
           function (val) {
             var parsed = parseFloat(val);
-            if (isNaN(parsed)) return null;
+            if (isNaN(parsed)) {
+              return null;
+            }
             return parsed / scale;
           });
       }
@@ -420,7 +701,7 @@ angular
       restrict: 'A',
       require: 'ngModel',
       link: function(scope, elem, attrs, ngModel) {
-        var fraction_digits = parseInt(attrs.roundView);
+        var fraction_digits = parseInt(attrs.roundView, 10);
         // model-to-view
         // Can't use a formatter here since we want full fixed point display
         // (e.g. 0 rendered as "0.00").
@@ -437,5 +718,4 @@ angular
       }
     };
   })
-
 ;

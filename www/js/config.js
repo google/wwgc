@@ -3,4 +3,6 @@ var CONFIG = {
   FIREBASE_URL: 'https://MY_PROJECT.firebaseio.com/',
   // Public key for Google API
   GOOGLE_API_KEY: 'MY_KEY',
+  // Analytics tracking ID (empty string to disable)
+  GOOGLE_ANALYTICS_ID: '',
 };

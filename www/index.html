@@ -19,18 +19,29 @@
 <head>
   <meta charset="UTF-8" />
   <title>Cardboard viewer profile generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
   <link rel="stylesheet" href="style.css" />
-  <link href="//fonts.googleapis.com/css?family=RobotoDraft:300,400,500&lang=en" rel="stylesheet">
+  <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.css">
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,700,300,100' rel='stylesheet' type='text/css'>
   <link href="images/favicon-32.png" rel="shortcut icon" type="image/x-icon">
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular.min.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular-animate.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-animate.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.11/seedrandom.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
   <script src="//cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
   <script src="//cdn.firebase.com/libs/angularfire/0.9.1/angularfire.min.js"></script>
   <script src="//wurfl.io/wurfl.js"></script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  </script>
+  <script src="js/third-party/ngScrollSpy.min.js"></script>
   <script src="js/third-party/ByteBufferAB.min.js"></script>
   <script src="js/third-party/ProtoBuf.min.js"></script>
   <script src="js/third-party/qrcode.js"></script>
@@ -41,74 +52,61 @@
 </head>
 
 <body ng-app="myApp" ng-controller="myController">
-  <nav class="navbar navbar-default navbar-static-top">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-          <img alt="Google Cardboard Logo" src="images/cardboard-logo.png" height="20">
-        </a>
+  <div class="wrapper">
+    <nav class="navbar">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="http://www.google.com/get/cardboard/">
+            <img alt="Google Cardboard Logo" src="images/cardboard-logo-white.png" height="28" />
+          </a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="http://www.google.com/get/cardboard/manufacturers/">Back to Manufacturers</a></li>
+          <li><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help.png" height="19" width="19" alt="?" /></a></li>
+        </ul>
       </div>
-      <ul class="nav navbar-nav" ng-init="menuItems = [{step: steps.WELCOME, text: 'Welcome'},{step: steps.INPUT,   text: 'Viewer parameters'},{step: steps.OUTPUT,  text: 'Generated profile'},]">
-        <li ng-repeat="item in menuItems" ng-class="{active: wizard_step == item.step}">
-          <a href="#" ng-click="$parent.wizard_step = item.step">{{$index+1}}. {{item.text}}</a>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></li>
-      </ul>
-    </div>
-  </nav>
+    </nav>
 
-  <div class="header" id="content">
-    <div class="container">
-      <h1>Viewer Profile Generator</h1>
-      <h4>Manufacturing a VR viewer? Create a viewer profile to ensure that it works seamlessly with the Google Cardboard app ecosystem.</h4>
-    </div>
-  </div>
-
-  <div class="container">
-    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-  </div>
-
-  <div class="fade-in-out" ng-show="wizard_step == steps.WELCOME">
-    <div class="container">
-      <div class="hero">
-        <div ng-controller="ModalCtrl" style="margin-bottom: 22px;">
-          <img src="images/hero.png" alt="Viewer Profile Generator"/>
-          <script type="text/ng-template" id="compatibleSmartphones.html">
-            <div class="modal-header">
-              <h4 class="modal-title">Suitable Android and iOS Smartphones</h4>
+    <div class="header clearfix" id="content">
+      <div class="container group">
+        <div ng-show="wizard_step == steps.WELCOME" class="welcome-header">
+          <img src="images/header-vpg.png" height="177" width="290" class="pull-right animated fadeIn" alt=" " />
+          <h1 class="animated fadeInUp">Viewer Profile Generator</h1>
+          <h4 class="animated fadeInUp">Manufacturing a VR viewer? Create a viewer profile to make sure your viewer will work seamlessly with Google Cardboard apps. </h4>
+        </div>
+        <div ng-show="wizard_step == steps.OUTPUT" class="success-header ng-hide">
+          <div class="text-center pull-right animated fadeInUp" style="margin: 15px 0 15px 0;">
+            <div id="params_qrcode"></div>
+            <div>
+              <a role="button" class="btn btn-default btn-sm" download="qr_viewer_profile.png" ng-href="{{png_params_qr_uri}}">Download PNG</a>
+              <a role="button" class="btn btn-default btn-sm" download="qr_viewer_profile.svg" ng-href="{{svg_params_qr_uri}}">Download SVG</a>
             </div>
-            <div class="modal-body">
-              <p>To create a viewer profile successfully, you will need a suitable smartphone for viewing a lens calibration VR scene.</p>
-              <p>The recommended phones for viewing this VR scene are:</p>
-              <ul>
-                <li>Samsung Galaxy S5 (Android), and</li>
-                <li>Apple iPhone 6 Plus (iOS).</li>
-              </ul>
+          </div>
+          <h1 class="animated fadeInUp">Success!</h1>
+          <h4 class="animated fadeInUp">Here is the QR viewer profile generated for: <br /><b>{{ params.vendor }} {{ params.model }}</b></h4>
+          <md-button class="md-flat md-large animated fadeInUp" ng-click="wizard_step = steps.WELCOME"> <img src="images/white_arrow.png" height="12" width="7" alt=" "/> Back to Form </md-button>
+        </div>
+      </div>
+    </div>
 
-              <p>If you are using a different smartphone, here are its minimum requirements:</p>
-              <ol>
-                <li>
-                  <p>
-                    The smartphone should be able to render the scene in full screen. To that end, use an Android smartphone which has the physical
-                    navigation keys. This will ensure that the software navigation keys like "back" or "home" buttons are not visible when viewing
-                    the VR scene:
-                  </p>
-                  <div class="figure">
-                    <img src="images/samsung-galaxy-s5-hardware-buttons.jpg"/><br/>
-                    <i>Physical navigation keys on Samsung Galaxy S5</i>
-                  </div>
-                  <p>
-                    If you do not have access to an Android phone with the physical navigation keys, download and install the
-                    <a href="https://play.google.com/store/apps/details?id=com.gmd.immersive" target="_blank">GMD Full Screen Immersive
-                      Mode app <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a> which can temporarily hide the software
-                      navigation buttons.
-                    </p>
-                    <div class="figure">
-                      <img src="images/gmd.png"/><br/>
-                      <i>Software navigation keys hidden using the GMD Full Screen Immersive Mode app.</i>
-                    </div>
+    <div class="container clearfix">
+      <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+
+    <div class="fade-in-out clearfix" ng-show="wizard_step == steps.WELCOME">
+      <div class="container">
+        <div class="hero">
+          <div ng-controller="ModalCtrl" style="margin-bottom: 22px;">
+            <script type="text/ng-template" id="compatibleSmartphones.html">
+              <div class="modal-header">
+                <h4 class="modal-title">Prerequisites</h4>
+              </div>
+              <div class="modal-body">
+                <p>In order to create a viewer profile, you will need a smartphone that is equipped for viewing the lens calibration VR scene.</p>
+                <p>In particular, it needs to meet these requirements:</p>
+                <ol>
+                  <li>
+                    <p>The smartphone must have the <strong>Google Chrome 44+</strong> browser on Android, or <strong>Mobile Safari 8+</strong> browser on iOS.</p>
                   </li>
                   <li>
                     <p>
@@ -116,304 +114,233 @@
                       viewer. Here are a couple of examples:
                     </p>
                     <div class="figure">
-                      <img src="images/too_small_phone.jpg"/><br/>
+                      <img src="images/too_small_phone.png"/><br/>
                       <i>Insufficient smartphone screen size for viewer profile creation.</i>
                     </div>
                     <div class="figure">
-                      <img src="images/well_sized_phone.jpg"/><br/>
+                      <img src="images/well_sized_phone.png"/><br/>
                       <i>Sufficient smartphone screen size for viewer profile creation.</i>
                     </div>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-primary" ng-click="ok()">Got it!</button>
-            </div>
-          </script>
+                    </ul>
+                  </li>
+                </ol>
+                <p>If you encounter bugs in the tool or have suggestions for improvements, please drop us a line at <a href="mailto:wwgc@google.com">wwgc@google.com</a>.</p>
+              </div>
+              <div class="modal-footer">
+                <md-button class="md-raised md-accent" ng-click="ok()">Got it, thank you!</md-button>
+              </div>
+            </script>
 
-          <h1>Welcome!</h1>
-          <p>
-            To generate a viewer profile you will need a <span ng-if="is_mobile">second</span> <a href="#" ng-click="open()">suitable Android or iOS smartphone <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>.<br/>
-            If you have a <span ng-if="is_mobile">second</span> suitable phone ready, open the following URL in your <span ng-if="is_mobile"><b>second</b></span> phone's browser or<br/>
-            scan the QR code below <span ng-if="is_mobile">with your <b>second</b> phone</span> to proceed:
-          </p>
-          <a ng-hide="true" ng-href="3d.html#{{firebase_token}}" id="remote_link"></a>
-          <div id="remote_qrcode"></div>
-          <a ng-href="{{short_remote_link}}" target="_blank">{{short_remote_link}}</a>
+            <h1 class="seperator">Getting started</h1>
+            <div class="row">
+              <div class="col-md-4 step-one">
+                <span class="num">1</span>
+                <p>You will need an <a href="#" ng-click="open()">Android or iOS smartphone</a> that meets some basic&nbsp;requirements.</p>
+                <img src="images/step_1_phones.png" height="253" width="202" alt="Nexus 6 or an iPhone 6 Plus">
+              </div>
+              <hr class="show-md" />
+              <div class="col-md-4 step-two">
+                <span class="num">2</span>
+                <p>Use your phone and open the URL or scan the QR code&nbsp;below.</p>
+                <a ng-hide="true" ng-href="3d.html#{{firebase_token}}" id="remote_link"></a>
+                <p>&nbsp;</p>
+                <a ng-href="{{short_remote_link}}">{{short_remote_link}}</a>
+                <p>&nbsp;</p>
+                <p>or</p>
+                <p>&nbsp;</p>
+                <div id="remote_qrcode"></div>
+              </div>
+              <hr class="show-md" />
+              <div class="col-md-4 step-three">
+                <span class="num">3</span>
+                <p>Place your phone in the viewer. Use the viewer parameter form below to calibrate your VR&nbsp;scene.</p>
+                <img src="images/step_3_vr.png" height="262" width="210" alt=" " />
+              </div>
+            </div>
+            <hr class="show-md" />
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="row text-left tip-arrow-keys">
+              <div class="col-md-2 text-center"><img src="images/tip-up-down-keys.png" height="64" width="97" /></div>
+              <div class="col-md-10"><p><strong>Tip:</strong> The VR scene is synced to the Viewer Parameter Form. You can adjust the parameters using your keyboard while the viewer is held up to your head.</p></div>
+            </div>
+            <div class="row text-left tip-tab">
+              <div class="col-md-2 text-center"><img src="images/tip-tab.png" height="46" width="77" /></div>
+              <div class="col-md-10"><p>Use the &ldquo;tab&rdquo; key to jump between fields. Use the up and down keyboard arrows to increase or decrease values within the fields.</p></div>
+            </div>
+          </div>
         </div>
-        <div class="buttons">
-          <button type="button" class="btn btn-default" ng-click="wizard_step = steps.INPUT">{{data.connections ? "Continue" : "Skip"}} &gt;</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="fade-in-out" ng-show="wizard_step == steps.INPUT">
-    <div class="container">
-
-      <div class="panel panel-default">
-        <div class="panel-heading clearfix">
-          <span class="pull-right">
-            <span><input type="checkbox" value="" ng-model="data.is_advanced" ng-change="save()"> Advanced viewer parameters</span>
-            &nbsp;
-            <input type="button" class="btn btn-default" ng-click="reset()" value=" Reset " />
-          </span>
-          <div class="panel-title" style="margin-top: 8px;">Viewer parameters</div>
+        <div class="container viewerParameters clearfix">
+          <h1 class="seperator">Viewer Parameter Form</h1>
+          <div class="row">
+            <div class="col-md-6"><p>Fill in the fields below to establish your viewer profile. Submit the form to generate a viewer QR profile.</p></div>
+            <div class="col-md-6 clearfix">
+              <md-button class="md-raised btn btn-default" ng-click="reset()" value=" Reset Form ">Reset Form</md-button>
+              <md-button class="md-raised btn btn-default" ng-click="saveOrLoadParameters.open = !saveOrLoadParameters.open">Save or Load Viewer Parameters</md-button>
+            </div>
+          </div>
+          <div ng-if="saveOrLoadParameters.open" class="slide-margin">
+            <p><strong>Save or load viewer parameters</strong></p>
+            <p>If you ever need to save or load the parameters entered in this form, simply copy and paste the URI below:</p>
+            <form novalidate="" class="simple-form">
+              <input class="form-control" type="url" ng-model="data.params_uri" onClick="this.select();" ng-change="set_params_uri()" />
+            </form>
+            <md-button class="btn btn-default param-close-button" ng-click="saveOrLoadParameters.open = !saveOrLoadParameters.open" ng-click="saveOrLoadParameters.open = !saveOrLoadParameters.open"><img src="images/close_button.png" height="30" width="30" alt="close" /></md-button>
+          </div>
         </div>
-        <div class="panel-body">
-          <form novalidate="" class="form-horizontal panel-body col-xs-7">
-            <!-- TODO: debounce input -->
-            <div class="form-group">
-              <label class="col-sm-4">Company name</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" ng-model="params.vendor" ng-focus="focus='vendor'" ng-blur='focus=null' ng-change="save()" maxlength="30"/>
+
+        <div class="container formContainer clearfix">
+          <div class="panel">
+            <div class="panel-body">
+              <form name="parameters" novalidate="" class="form-horizontal col-sm-6">
+                <div class="form-group">
+                  <label class="sr-only" for="form-vendor">Your Company</label>
+                  <input type="text" id="form-vendor" class="form-control" ng-model="params.vendor" ng-focus="focus='vendor'" ng-change="save()" maxlength="30" placeholder="Your Company" />
+                </div>
+                <div class="form-group">
+                  <label class="sr-only" for="form-viewer-name">Viewer Name</label>
+                  <input type="text" id="form-viewer-name" class="form-control" ng-model="params.model" ng-focus="focus='model'" ng-change="save()" maxlength="30" placeholder="Viewer Name">
+                </div>
+                <div class="form-group">
+                  <p class="form-label">Primary button type<md-button class="md-flat helper show-md" ng-click="focus='primary_button'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+                  <md-radio-group data-ng-value="choice.id" ng-model="params.primary_button" class="md-primary" ng-focus="focus='primary_button';" ng-change="focus='primary_button';save();" >
+                  <span data-ng-repeat="choice in button_type_options">
+                    <md-radio-button data-ng-value="choice.id" data-ng-id="choice.id_attribute" data-ng-model="$parent.params.primary_button" ng-focus="$parent.focus='primary_button';" ng-change="$parent.focus='primary_button';$parent.save();" class="pull-left" tabindex="-1">
+                    {{choice.text}}
+                  </span>
+                </md-radio-group>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4">Viewer name</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" ng-model="params.model" ng-focus="focus='model'" ng-blur='focus=null' ng-change="save()" maxlength="30"/>
+              <div class="form-group">
+                <p class="form-label">Screen to lens distance (mm) <md-button class="md-flat helper show-md" ng-click="focus='screen_to_lens_distance'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+                <input type="number" id="form-screen_to_lens_distance" min="0" inputmode="numeric" class="form-control" ng-model="params.screen_to_lens_distance" ng-change="save()" my-scale="1000" round-view="0" ng-focus="focus='screen_to_lens_distance'" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)" ng-change="params.screen_to_lens_distance = this.value; alert(this.value(); save()" />
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4">Primary button type</label>
-              <div class="col-sm-8">
-                <select class="form-control" ng-model="params.primary_button"
-                ng-options="value as name for (name, value) in button_type" ng-focus="focus='primary_button'" ng-blur='focus=null' ng-change="save()"></select>
+              <div class="form-group">
+                <p class="form-label">Inter-lens distance (mm)<md-button class="md-flat helper show-md" ng-click="focus='inter_lens_distance'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+                <input type="number" id="form-inter_lens_distance" min="0" inputmode="numeric" class="form-control" ng-model="params.inter_lens_distance" ng-change="save()" my-scale="1000" round-view="0" ng-focus="focus='inter_lens_distance'" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)" />
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4">Screen to lens distance (mm)</label>
-              <div class="col-sm-8">
-                <input type="number" class="form-control" ng-model="params.screen_to_lens_distance"
-                ng-change="save()" my-scale="1000" round-view="0" ng-focus="focus='screen_to_lens_distance'" ng-blur='focus=null' />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4">Inter-lens distance (mm)</label>
-              <div class="col-sm-8">
-                <input type="number" class="form-control" ng-model="params.inter_lens_distance" ng-change="save()"
-                my-scale="1000" round-view="0" ng-focus="focus='inter_lens_distance'" ng-blur='focus=null' />
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4">Screen vertical alignment</label>
-              <div class="col-sm-8">
-                <select class="form-control" ng-model="params.vertical_alignment"
-                ng-options="value as name for (name, value) in vertical_alignment_type" ng-change="save()"
-                ng-focus="focus='vertical_alignment'" ng-blur='focus=null'></select>
-              </div>
+              <div class="form-group">
+                <p class="form-label">Screen vertical alignment<md-button class="md-flat helper show-md" ng-click="focus='vertical_alignment'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+                <md-radio-group ng-model="params.vertical_alignment" class="md-primary" ng-change="save();" ng-focus="focus='vertical_alignment'" >
+                  <span data-ng-repeat="choice in vertical_alignment_type_options">
+                <md-radio-button data-ng-value="choice.id" data-ng-id="choice.id_attribute" data-ng-model="$parent.params.vertical_alignment" ng-focus="$parent.focus='vertical_alignment'" ng-change="$parent.save();" class="pull-left" tabindex="-1">
+                {{choice.text}}
+                </span>
+              </md-radio-group>
             </div>
             <div ng-if="params.vertical_alignment != vertical_alignment_type.CENTER">
               <div class="form-group">
-                <label class="col-sm-4">Tray to lens-center distance (mm)</label>
-                <div class="col-sm-8">
-                  <input type="number" class="form-control" ng-model="params.tray_to_lens_distance" ng-change="save()"
-                  my-scale="1000" round-view="0" ng-focus="$parent.focus='tray_to_lens_distance'" ng-blur='$parent.focus=null' />
-                </div>
+                <p class="form-label">Tray to lens-center distance (mm)<md-button class="md-flat helper show-md" ng-click="$parent.focus='tray_to_lens_distance'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+                <input type="number" min="0" inputmode="numeric" class="form-control" ng-model="params.tray_to_lens_distance" ng-change="save()" my-scale="1000" round-view="0" ng-focus="$parent.focus='tray_to_lens_distance'" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)" />
               </div>
             </div>
             <div class="form-group">
-              <label class="col-sm-4">Distortion coefficients</label>
-              <div class="col-sm-8">
+              <p class="form-label">Distortion coefficients<md-button class="md-flat helper show-md" ng-click="focus='distortion_coefficients'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+              <p class="distortion-container">
                 <span ng-repeat="name in ['1', '2']">
-                  k<sub>{{name}}</sub> <input class="form-control" type="number" ng-model="params.distortion_coefficients[$index]"
-                  step=".01" ng-change="save()" round-view="2" ng-focus="$parent.focus='distortion_coefficients'" style="width: 5.5em; display: inline; margin-right: 1em;" ng-blur='$parent.focus=null' />
+                  <small style="font-size: 70%">k<sub>{{name}}</sub></small> <input class="form-control" name="k{{name}}" type="number" inputmode="numeric" ng-model="params.distortion_coefficients[$index]" step=".01" ng-change="save()" round-view="2" ng-focus="$parent.focus='distortion_coefficients'" style="width: 5.5em; display: inline; margin-right: 1em;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" ng-non-zero/> <span style="color:red; font-size: 16px;" ng-show="parameters.k{{name}}.$invalid">k<sub>{{name}}</sub> coefficient should not be left set to 0.00.</span>
                 </span>
-              </div>
+              </p>
             </div>
-            <div ng-if="data.is_advanced">
-              <div class="form-group">
-                <label class="col-sm-4">Field-of-view angles</label>
-                <div class="col-sm-8">
-                  <span ng-repeat="name in ['Outer', 'Inner', 'Top', 'Bottom']">
-                    {{name}} (&deg;) <input class="form-control" type="number" ng-model="params.left_eye_field_of_view_angles[$index]" ng-focus="$parent.$parent.focus='left_eye_field_of_view_angles'" ng-change="save()" round-view="0" ng-blur='$parent.$parent.focus=null'/>
-                  </span>
-                </div>
-              </div>
+            <div class="form-group expander" ng-class="{'active': isAdvancedExpanded}" data-ng-click="isAdvancedExpanded = !isAdvancedExpanded">
+             <p class="form-label"> Advanced viewer parameters <img src="images/expand_button.png" height="10" width="17" /></p>
+           </div>
+           <div ng-class="{'active': isAdvancedExpanded}" class="advanced_options">
+            <div class="form-group">
+              <p class="form-label">Field-of-view angles<md-button class="md-flat helper show-md" ng-click="focus='left_eye_field_of_view_angles'; showDetailsModal($event);"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button></p>
+              <span ng-repeat="name in ['Outer', 'Inner', 'Top', 'Bottom']">
+                {{name}} (&deg;) <input class="form-control" type="number" inputmode="numeric" min="0" ng-model="params.left_eye_field_of_view_angles[$index]" ng-focus="$parent.focus='left_eye_field_of_view_angles'" ng-change="save()" round-view="0" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46)" />
+              </span>
+            </div>
+            <div class="form-group" layout="row" layout-wrap>
               <!-- TODO: directive mapping false to null in model -->
-              <label>
-                <input type="checkbox" ng-model="params.has_magnet" ng-hide="has_magnet_disabled" ng-change="save()" ng-focus="focus='$parent.has_magnet'" ng-blur='$parent.focus=null'/> Viewer contains some embedded magnets. Selecting this checkbox will inform all apps built using the Cardboard SDKs that the smartphone's magnetometer should not be used.
-              </label>
+              <md-checkbox class="md-primary" ng-model="params.has_magnet" ng-hide="has_magnet_disabled" aria-label="Viewer contains some embedded magnets. Selecting this checkbox will inform all apps built using the Cardboard SDKs that the smartphone's magnetometer should not be used." ng-change="save()" ng-focus="focus='has_magnet'" flex="80" ng-attr-disabled="{{ params.primary_button == 1 || undefined }}">Viewer contains some embedded magnets. Selecting this checkbox will inform all apps built using the Cardboard SDKs that the smartphone&rsquo;s magnetometer should not be used.</md-checkbox><md-button class="md-flat helper show-md" ng-click="focus='has_magnet'; showDetailsModal($event);" flex="18"><img src="images/help-grey.png" height="19" width="19" alt="?" /></md-button>
             </div>
-          </form>
-
-          <div class="col-xs-5">
-            <!-- TODO: declare context help together with input field somehow? -->
-            <div ng-if="focus == null">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Fill in the fields on the left to describe your viewer profile.</p>
-                  <p>When you're done, click the "Generate profile >" button below to see the generated viewer QR profile.</p>
-                </div>
-                <div class="alert alert-tooltip">
-                  <p><b>Tip 1:</b> Click on any of the fields to see the detailed help.</p>
-                  <table>
-                    <tr>
-                      <td><b>Tip 2:</b> Use the up/down keyboard arrow keys in numeric fields to increment or decrement values, and the "Tab" key to navigate between fields.</td>
-                      <td><img src="images/arrow_keys.png" alt="Keyboard arrow keys"/></td>
-                    </tr>
-                  </table>
-                </div>
+          </div>
+          <div class="buttons">
+            <md-button class="md-raised md-accent md-large" ng-disabled="parameters.k1.$invalid || parameters.k2.$invalid" ng-click="wizard_step = steps.OUTPUT"> Generate profile </md-button>
+            <div class="clearfix"></div>
+          </div>
+        </form>
+        <div class="col-sm-6" ng-if="wizard_step == steps.WELCOME">
+          <!-- TODO: declare context help together with input field somehow? -->
+          <div class="product-help" affix>
+            <div class="alert alert-tooltip">
+              <div ng-if="focus == 'vendor' || focus == null">
+                <h4 ng-bind-html="helper_sections.vendor.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.vendor.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'vendor'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Enter your company's name (up to 30 characters). This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing flow.</p>
-                </div>
+              <div ng-if="focus == 'model'">
+                <h4 ng-bind-html="helper_sections.model.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.model.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'model'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Enter your viewer's name (up to 30 characters). Similarly to the company's name, the viewer's name will be shown in all apps which work with Google Cardboard after completing the viewer pairing flow.</p>
-                </div>
+              <div ng-if="focus == 'primary_button'">
+                <h4 ng-bind-html="helper_sections.primary_button.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.primary_button.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'primary_button'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Choose the type of the primary button on your device.</p>
-                  <p>If your device has no inputs and the smartphone screen is not accessible, choose "NONE". Similarly, choose "NONE" if your device has a separate Bluetooth controller and no other built-in inputs.</p>
-                  <p>If your device has no inputs, but the user can touch the smartphone screen with the finger without taking the phone out of the viewer, choose "TOUCH".</p>
-                  <p>If your device has a mechanical input which is ultimately registered as a screen touch, but the user's finger is not touching the screen directly, choose "INDIRECT_TOUCH".</p>
-                  <p>If your device has a Google Cardboard-like magnetic input, choose "MAGNET".</p>
-                </div>
+              <div ng-if="focus == 'screen_to_lens_distance'">
+                <h4 ng-bind-html="helper_sections.screen_to_lens_distance.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.screen_to_lens_distance.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'screen_to_lens_distance'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Measure the distance between the smartphone screen and the lenses of your viewer using a ruler or a caliper as shown in the diagram below, and enter the distance in millimeters (mm).</p>
-                  <p><center><img class="img-responsive" width="100%" height="100%" src="images/screen_to_lens_distance.png" /></center></p>
-                  <p><b>Note:</b> if your viewer comes with an adjustable focal distance, measure the average distance between the screen and the lenses.</p>
-                </div>
+              <div ng-if="focus == 'inter_lens_distance'">
+                <h4 ng-bind-html="helper_sections.inter_lens_distance.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.inter_lens_distance.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'inter_lens_distance'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Measure the distance between the centers of your viewer's lenses using a ruler or a caliper as shown in the diagram below, and enter this distance in millimeters (mm).</p>
-                  <p><center><img class="img-responsive" width="100%" height="100%" src="images/inter_lens_distance.png" /></center></p>
-                  <p><b>Note:</b> if your viewer comes with an adjustable IPD, measure the average distance between the lense centers.</p>
-                </div>
+              <div ng-if="focus == 'vertical_alignment'">
+                <h4 ng-bind-html="helper_sections.vertical_alignment.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.vertical_alignment.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'vertical_alignment'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Choose whether the smartphone screen is vertically aligned to the bottom/top of the viewer when it's inserted, or whether the smartphone is always vertically centered.</p>
-                  <p>For most viewers this should be set to "BOTTOM".</p>
-                </div>
+              <div ng-if="focus == 'tray_to_lens_distance'">
+                <h4 ng-bind-html="helper_sections.tray_to_lens_distance.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.tray_to_lens_distance.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'tray_to_lens_distance'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Measure the vertical distance between the tray and your viewer's lens center using a ruler or a caliper as shown in the diagram below, and enter this distance in millimeters (mm).</p>
-                  <p>
-                    <center>
-                      <img ng-if="params.vertical_alignment == vertical_alignment_type.BOTTOM"
-                      class="img-responsive" width="100%" height="100%" src="images/tray_to_lens_distance_bottom.png"/>
-                      <img ng-if="params.vertical_alignment == vertical_alignment_type.TOP"
-                      class="img-responsive" width="100%" height="100%" src="images/tray_to_lens_distance_top.png"/>
-                    </center>
-                  </p>
-                </div>
+              <div ng-show="focus == 'distortion_coefficients'">
+                <h4 ng-bind-html="helper_sections.distortion_coefficients.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.distortion_coefficients.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-show="focus == 'distortion_coefficients'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>View the lens calibration VR scene which appears on your smartphone.</p>
-                  <p>Adjust the distortion coefficients so that straight lines in the virtual world still appear straight when you are looking at them through the lenses. Similarly, right (90&deg;) angles should still appear as right angles when looking at them through the lenses.</p>
-                  <p>Make sure that these conditions hold both in the center of your field-of-view and in the periphery.</p>
-                  <p>Here is the current lens curvature for your distortion coefficients:</p>
-                  <p><center><canvas id="distortion_plot" width="70" height="140" style="width:auto; height:100%;"></canvas></center></p>
-                </div>
+              <div ng-if="focus == 'left_eye_field_of_view_angles'">
+                <h4 ng-bind-html="helper_sections.left_eye_field_of_view_angles.title | raw_html"></h4>
+                <div ng-bind-html="helper_sections.left_eye_field_of_view_angles.content | raw_html"></div>
               </div>
-            </div>
-            <div ng-if="focus == 'left_eye_field_of_view_angles'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Enter the field-of-view angles for your left lens.</p>
-                </div>
-                <div class="alert alert-warning">
-                  <p><b>Warning:</b> changing the field-of-view angles results only in a slight rendering optimization on large screen-size smartphones. For most viewers these fields be set to 50&deg; or more.</p>
-                </div>
-              </div>
-            </div>
-            <div ng-if="focus == 'has_magnet'">
-              <div class="product-help">
-                <div class="alert alert-tooltip">
-                  <p>Select this checkbox if your viewer has at least one embedded magnet. Doing so will inform all apps built using the Cardboard SDKs that the smartphone's magnetometer should not be used.</p>
-                </div>
+              <div ng-if="focus == 'has_magnet'">
+                <div ng-bind-html="helper_sections.has_magnet.content | raw_html"></div>
               </div>
             </div>
           </div>
+          <!-- Form ends here!! -->
         </div>
       </div>
+    </div>
+  </div>
+  </div>
+  </div>
 
-      <accordion close-others="true">
-        <accordion-group heading="Save or load viewer parameters" parameters-open="false">
-        <p style="color: #555;">
-          If you ever need to save or load the parameters entered in this form, simply copy and paste the URI below:
-        </p>
-        <form novalidate="" class="simple-form">
-          <input class="form-control" type="url" ng-model="data.params_uri"
-          onClick="this.select();" ng-change="set_params_uri()" />
-        </form>
-      </accordion-group>
-    </accordion>
-
-    <div class="buttons">
-      <button type="button" class="btn btn-default pull-left" ng-click="wizard_step = steps.WELCOME">&lt; Previous</button>
-      <button type="button" class="btn btn-primary pull-right" ng-click="wizard_step = steps.OUTPUT">Generate profile &gt;</button>
-      <div class="clearfix"></div>
+  <div class="fade-in-out clearfix" ng-show="wizard_step == steps.OUTPUT">
+    <div class="container">
+      <div class="panel">
+        <div class="panel-body animated fadeInUp">
+          <h1 class="seperator animated fadeInUp">Usage Guidelines</h1>
+          <p style="color:#666;margin-top:42px;">Before using this profile for your viewer, please <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" target="_blank">download and thoroughly read the QR viewer profile usage guidelines (PDF)</a>. The information in these guidelines will help you to understand the appropriate use of the generated viewer profile, and learn about do's and don'ts when developing marketing, packaging and other materials for your viewer.</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-
-<div class="fade-in-out" ng-show="wizard_step == steps.OUTPUT">
-  <div class="container">
-
-    <div class="panel panel-default">
-      <div class="panel-heading clearfix">
-        <div class="panel-title">Generated QR viewer profile for {{params.vendor}} {{params.model}}</div>
-      </div>
-      <div class="panel-body">
-        <p>
-          Here is the QR viewer profile generated for {{params.vendor}} {{params.model}} using the parameters in the previous page:
-        </p>
-        <div class="text-center" style="margin: 15px 0 15px 0;">
-          <div id="params_qrcode"></div>
-          <div>
-            <a role="button" class="btn btn-default btn-sm"
-            download="qr_viewer_profile.png" ng-href="{{png_params_qr_uri}}">Download as PNG</a>
-            <a role="button" class="btn btn-default btn-sm"
-            download="qr_viewer_profile.svg" ng-href="{{svg_params_qr_uri}}">Download as SVG</a>
-          </div>
-        </div>
-      </div>
+<div class="footer clearfix" id="maia-footer">
+  <div class="container maia-aux">
+    <div class="logo">
+      <a href="//google.com"><img alt="Google" src="images/google_logo.png" height="25" width="75"></a>
     </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading clearfix">
-        <div class="panel-title">QR viewer profile usage guidelines</div>
-      </div>
-      <div class="panel-body">
-        <p>
-          Before using this profile for your viewer, please <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" target="_blank">download and thoroughly read the QR viewer profile usage guidelines (PDF) <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>. The information in these guidelines will help you to understand the appropriate use of the generated viewer profile, and learn about do's and don'ts when developing marketing, packaging and other materials for your viewer.
-        </p>
-      </div>
-    </div>
-
-    <div class="buttons">
-      <button type="button" class="btn btn-default pull-left" ng-click="wizard_step = steps.INPUT">&lt; Previous</button>
-      <a href="http://www.google.com/get/cardboard/downloads/wwgc_asset_guidelines_v1.0.pdf" target="_blank" class="btn btn-primary pull-right" role="button">Download the PDF guidelines</a>
-      <div class="clearfix"></div>
+    <div class="pull-right">
+      <a href="//www.google.com/intl/en/about/">About Google</a>
+      <span>&nbsp;&middot;&nbsp;</span>
+      <a href="//www.google.com/intl/en/policies/privacy/">Privacy</a>
+      <span>&nbsp;&middot;&nbsp;</span>
+      <a href="//www.google.com/intl/en/policies/terms/">Terms</a>
+      <span>&nbsp;&middot;&nbsp;</span>
+      <a href="https://plus.google.com/+GoogleCardboard/">Google+</a>
     </div>
   </div>
 </div>

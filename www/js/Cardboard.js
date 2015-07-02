@@ -16,9 +16,9 @@
 
 "use strict";
 
-/* global: dcodeIO */
+/*global dcodeIO*/
 
-var CARDBOARD = function() {
+var CARDBOARD = (function() {
   // to and from URL-safe variant of base64 encoding
   function base64ToUrl(s) {
     return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
@@ -49,11 +49,15 @@ var CARDBOARD = function() {
     return DeviceParams.decode64(base64_msg);
   }
 
+  // Returns plain object having only properties of interest.
   function uriToParams(uri) {
-    var params = uriToParamsProto(uri);
-    // TODO: better way to get plain old data without methods
-    params.__proto__ = {}.__proto__;
-    return params;
+    var source = uriToParamsProto(uri), dest = {}, k;
+    for (k in source) {
+      if (source.hasOwnProperty(k)) {
+        dest[k] = source[k];
+      }
+    }
+    return dest;
   }
 
   return {
@@ -62,4 +66,4 @@ var CARDBOARD = function() {
     uriToParams: uriToParams,
     uriToParamsProto: uriToParamsProto,
   };
-}();
+}());

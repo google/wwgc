@@ -44,8 +44,6 @@ required for correct rendering are 1) a Cardboard viewer profile, and
 
 However, there are also a number of limitations to this approach:
 
-  * Chrome for Android doesn't support full screen.  See
-    https://code.google.com/p/chromium/issues/detail?id=378412
   * No way to get physical screen properties. See the following enlightening rant:
     [Let's get physical (units)](http://smus.com/physical-units/).
   * Magnets may cause orientation drift problems -

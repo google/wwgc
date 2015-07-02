@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Google Cardboard app ecosystem is growing fast: the Google Play Store contains hundreds of apps compatible with Google Cardboard. The Play Store also contains a [dedicated Cardboard app collection](https://play.google.com/store/apps/collection/promotion_3001011_cardboard_featured_apps), which features the best of these apps.
+Google Cardboard app ecosystem is growing fast: the Google Play Store contains hundreds of apps compatible with Google Cardboard, YouTube contains tens of thousands of 360° videos. The Play Store also contains a [dedicated Cardboard app collection](http://play.google.com/store/apps/collection/promotion_collections_cardboard), which features the best of these apps.
 
 VR viewers can come in a wide variety of shapes and sizes. Use the viewer
 profile generation tool to ensure that Cardboard apps work properly with your
@@ -36,61 +36,47 @@ this usage guide, please contact [wwgc@google.com](mailto:wwgc@google.com).
 
 In order to create a viewer profile successfully, you will need a suitable
 smartphone for viewing the lens calibration VR scene. The recommended phones
-for viewing this VR scene are Samsung Galaxy S5 (Android) and Apple iPhone 6
+for viewing this VR scene are Nexus 6 (Android) and Apple iPhone 6
 Plus (iOS).
 
 If you are using a different smartphone, here are the minimal requirements for
 the smartphone.
 
-  1. The  smartphone should be able to render the scene in full screen. To that end,
-  you should use an Android smartphone which does not have the physical
-  navigation keys. This will ensure that the software navigation keys like back
-  or home buttons are not visible when viewing the VR scene:
-
-  <img src="images/physical_navkeys.jpg">
-
-  _Physical navigation keys on Samsung Galaxy S5_
-
-  If you do not have access to an Android phone with the physical navigation
-  keys, download and install the [GMD Full Screen Immersive Mode](https://play.google.com/store/apps/details?id=com.gmd.immersive) app which can temporarily hide the software navigation buttons.
-
-  <img src="images/gmd_fullscreen.png">
-
-  _Software navigation keys hidden using the GMD Full Screen Immersive Mode._
+  1. The smartphone should have the Google Chrome 44+ browser on Android, or
+Mobile Safari 8+ browser on iOS.
 
   2. The smartphone screen should be bigger than the total visible screen area (i.e.
 bigger than the smartphone screen facing apertures) on your viewer.
 
     * This phone’s screen is NOT large enough for viewer profile creation:
-
-      <img src="images/screen_too_small.png">
+    
+      <img src="images/screen_too_small.png" width="380">
 
     * This phone has a large enough screen for viewer profile creation:
-
-      <img src="images/screen_big_enough.png">
+    
+      <img src="images/screen_big_enough.png" width="400">
 
 ### Step 1. Viewing the VR scene on your smartphone
 
-Open the [viewer profile generator](https://voyg0eji.firebaseapp.com/) on your desktop browser and scan the QR code using a smartphone:
+Open the [viewer profile generator](http://www.google.com/get/cardboard/viewerprofilegenerator/) on your desktop browser and scan the QR code using a smartphone:
 
-<img src="images/vpg_welcome.png">
+<img src="images/vpg_welcome.png" width="500">
 
 When the scene opens on your phone, tap the screen once to show it in full
 screen. If you see a popup that says "Mobile device display properties
 unknown", then the phone cannot be used for calibration because the physical
 screen size info is unavailable.
 
-<img src="images/scene.png">
-_Calibration VR scene on the smartphone_
-
 After opening the VR scene on your smartphone, insert the smartphone into your
-viewer and proceed with entering the details of your viewer into your browser as described below.
+viewer and proceed with entering the details of your viewer into your browser as illustrated below.
+
+<img src="images/scene.png" width="200">
 
 ### Step 2. Company and viewer details
 
 Start by entering the company and viewer names:
 
-<img src="images/enter_names.png" width="443">
+<img src="images/enter_names.png" width="300">
 
 These names will be visible to the users during the viewer "pairing" and other
 flows in Google Cardboard-compatible apps.
@@ -102,7 +88,7 @@ flows in Google Cardboard-compatible apps.
 After entering the company and viewer names, describe the inputs on your
 viewer. In particular, describe the primary button on your device:
 
-<img src="images/primary_button.png" width="624">
+<img src="images/primary_button.png" width="400">
 
   * If your device has no inputs and the smartphone screen is not accessible,
 choose "NONE". Similarly, choose "NONE" if your device has a separate Bluetooth
@@ -127,7 +113,7 @@ Measure the distance between the smartphone screen and the lenses of your
 viewer using a ruler or a caliper as shown in the diagram below, and enter the
 distance in millimeters into the "Screen to lens distance (mm)" field.
 
-<img src="images/screen-lens-1.png" width="258"> <img src="images/screen-lens-2.jpg" width="326">
+<img src="images/screen-lens-1.png" width="225"> <img src="images/screen-lens-2.jpg" width="326">
 
 If your viewer comes with an adjustable focal distance, measure the average
 distance between the screen and the lenses.
@@ -141,7 +127,7 @@ Measure the distance between the centers of your viewer's lenses using a ruler
 or a caliper as shown in the diagram below, and enter this distance in
 millimeters into the "Inter-lens distance (mm)" field.
 
-<img src="images/lens-lens-1.png" width="266"> <img src="images/lens-lens-2.jpg" width="309">
+<img src="images/lens-lens-1.png" width="214"> <img src="images/lens-lens-2.jpg" width="309">
 
 If your viewer comes with an adjustable inter-lens distance to accommodate
 varying IPDs, measure the average distance between the screen and the lenses.
@@ -202,7 +188,7 @@ If you chose "BOTTOM" or "TOP" options for "Screen vertical alignment", measure
 the tray to lens-center distance from the bottom/top of your viewer planes
 respectively and enter it into the "Tray to lens-center distance (mm)" field.
 
-<img src="images/enter_SVA.png" width="495">
+<img src="images/enter_SVA.png" width="350">
 
 To ensure that you have entered the screen vertical distance correctly, verify
 that the red markers appear in the vertical center of the visible
@@ -245,7 +231,7 @@ Google Cardboard SDKs approximate the ideal distortion model by exposing <img sr
 
 If you know your lens distortion <img src="images/k1.png"> and <img src="images/k2.png"> coefficients, insert them into the "Distortion coefficients" field.
 
-<img src = "images/dist_coefficients.png">
+<img src = "images/dist_coefficients.png" width="150">
 
 To <strong>empirically</strong> establish these coefficients or to double-check that the coefficients which
 you have entered are correct, open the VR scene on your smartphone as described
@@ -272,10 +258,12 @@ the field of view when viewing the scene in the VR headset.
   <img src="images/incorrect_coeff-1.png" width="419">
   <img src="images/incorrect_coeff-2.png" width="419">
 
+<strong>Note</strong>: for any singlet lens with non-zero curvature, the distortion coefficients <strong>should not be set to 0.00</strong>. The viewer profile generator will not allow you to create a viewer profile if the coefficients are set to zero.
+
 #### Advanced viewer parameters
 
-To configure the advanced viewer parameters, select the checkbox "Advanced
-viewer parameters" at the top right corner of "Viewer parameters" form.
+To configure the advanced viewer parameters, expand the "Advanced
+viewer parameters" section at the bottom of "Viewer parameters" form.
 
 <img src="images/AVP.png" width="365">
 
@@ -294,14 +282,14 @@ magnetometer should not be used.
 
 ### Step 4. QR Viewer Profile Generation
 
-After performing the steps above, click on the "Generated profile >" button.
-The next page contains a generated viewer profile which you can test with
+After performing the steps above, click on the "Generate Profile" button.
+The next page contains a generated viewer profile which you can use with
 Cardboard-compatible applications.
 
-<img src="images/QR-preview.png" width="390">
+<img src="images/QR-preview.png" width="800">
 
-Open the Google Cardboard app, select "Settings" menu option, click on
-"Switch viewer" and scan the generated QR code.
+To test the generated profile, open the Google Cardboard app, select "Settings"
+menu option, click on "Switch viewer" and scan the generated QR code.
 
 <img src="images/cardboard_app.png" width="200">
 <img src="images/default_viewer.png" width="200">

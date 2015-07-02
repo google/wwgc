@@ -16,7 +16,7 @@
 
  "use strict";
 
- /* globals: THREE */
+ /*globals THREE*/
 
 // Pincushion distortion function which maps from position on real screen to
 // virtual screen (i.e. texture) relative to optical center:

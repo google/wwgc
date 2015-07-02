@@ -16,7 +16,7 @@
 
  "use strict";
 
- /* globals: THREE, CARDBOARD */
+ /*global THREE, CARDBOARD, renderer*/
 
  THREE.CardboardStereoEffect = function (
   cardboard_view, scene, camera, overrideMaterial, clearColor, clearAlpha ) {
@@ -91,7 +91,9 @@
     // begin StereoEffect
     scene.updateMatrixWorld();
 
-    if ( camera.parent === undefined ) camera.updateMatrixWorld();
+    if ( camera.parent === undefined ) {
+      camera.updateMatrixWorld();
+    }
 
     camera.matrixWorld.decompose( _position, _quaternion, _scale );
 

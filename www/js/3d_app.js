@@ -16,13 +16,13 @@
 
 'use strict';
 
-/* globals:  THREE, Firebase, screenfull, WURFL, IMAGES, CARDBOARD, CONFIG */
+/*global alert, document, screen, window, init,
+  THREE, Firebase, screenfull, CARDBOARD, CONFIG, ga*/
 
 // meter units
 var CAMERA_HEIGHT = 0;
 var CAMERA_NEAR = 0.1;
 var CAMERA_FAR = 100;
-var FULLSCREEN_CHECK_INTERVAL_MS = 30 * 1000;
 
 var camera, scene, renderer, composer;
 var controls;
@@ -30,36 +30,94 @@ var element, container;
 
 var clock = new THREE.Clock();
 
-init();
+// Update the message text if on iOS
+if (!screenfull.enabled) {
+  document.getElementById("title").innerHTML = "Rotate phone horizontally";
+}
 
-function init() {
-  var firebase_token = window.location.hash.replace(/^#/, '');
-  if (firebase_token) {
-    var firebase_ref = new Firebase(CONFIG.FIREBASE_URL);
-    firebase_ref.authWithCustomToken(firebase_token, function(error, authData) {
-      if (error) {
-        console.log("Firebase login failed.", error);
+function setMessageVisible(is_visible) {
+  var css_visibility = is_visible ? "block" : "none";
+  document.getElementById("message").style.display = css_visibility;
+}
+
+function isFullscreen() {
+  var screen_width = Math.max(window.screen.width, window.screen.height);
+  var screen_height = Math.min(window.screen.width, window.screen.height);
+
+  return window.document.hasFocus() &&
+         (screen_width === window.innerWidth) &&
+         (screen_height === window.innerHeight);
+}
+
+function resize() {
+  var width = container.offsetWidth;
+  var height = container.offsetHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
+  renderer.setViewport(0, 0, width, height);
+
+  composer.setSize(width, height);
+
+  setMessageVisible(!isFullscreen());
+}
+
+function animate(t) {
+  var delta = clock.getDelta();
+  camera.updateProjectionMatrix();
+  controls.update(delta);
+  composer.render();
+
+  window.requestAnimationFrame(animate);
+}
+
+if (CONFIG.GOOGLE_ANALYTICS_ID) {
+  ga('create', CONFIG.GOOGLE_ANALYTICS_ID, 'auto');
+  ga('send', 'pageview');
+}
+window.onerror = function(message, file, line, col, error) {
+  ga('send', 'exception', {
+    'exDescription': error ? error.stack : message,
+    'exFatal': true});
+};
+
+function setOrientationControls(e) {
+  if (!e.alpha) {
+    return;
+  }
+
+  controls = new THREE.DeviceOrientationControls(camera, true);
+  controls.connect();
+  controls.update();
+
+  if (screenfull.enabled) {
+    // Android
+    window.addEventListener('click', function() {
+      // Must be called here because initiated by user
+      if (screenfull.isFullscreen) {
+        screen.wakelock.release();
       } else {
-        var firebase_user = firebase_ref.child('users').child(authData.uid);
-        // TODO: display "waiting for data"
-        firebase_user.child('params_uri').once('value', function(data) {
-          var device = CARDBOARD.uriToParams(data.val());
-          init_with_cardboard_device(firebase_user, device);
-        });
-        // Maintain list of connections on this session
-        var firebase_connected = firebase_ref.root().child('.info/connected');
-        firebase_connected.on('value', function(is_connected) {
-          if (is_connected.val()) {
-            // TODO: have connections be list of device names
-            var entry = firebase_user.child('connections').push(true);
-            entry.onDisconnect().remove();
-          }
-        });
+        screen.wakelock.request();
+      }
+
+      screenfull.toggle();
+    });
+
+    document.addEventListener(screenfull.raw.fullscreenchange, function() {
+      if (screenfull.isFullscreen) {
+        screen.orientation.lock('landscape');
+      } else {
+        screen.orientation.unlock();
       }
     });
   } else {
-    console.log("URL is missing session info:", window.location);
+    // iOS
+    screen.wakelock.request();
   }
+
+  window.removeEventListener('deviceorientation', setOrientationControls, true);
 }
 
 function init_with_cardboard_device(firebase, cardboard_device) {
@@ -142,79 +200,36 @@ function init_with_cardboard_device(firebase, cardboard_device) {
   window.setTimeout(resize, 1);
 
   animate();
-  if (WURFL.is_mobile) {
-    window.setTimeout(checkFullscreen, FULLSCREEN_CHECK_INTERVAL_MS);
-  }
 }
 
-function setOrientationControls(e) {
-  if (!e.alpha) {
-    return;
-  }
-
-  controls = new THREE.DeviceOrientationControls(camera, true);
-  controls.connect();
-  controls.update();
-
-  if (screenfull.enabled) {
-    // Android
-    element.addEventListener('click', function() {
-      // Must be called here because initiated by user
-      if (screenfull.isFullscreen) {
-        screen.wakelock.release();
+function init() {
+  var firebase_token = window.location.hash.replace(/^#/, '');
+  if (firebase_token) {
+    var firebase_ref = new Firebase(CONFIG.FIREBASE_URL);
+    firebase_ref.authWithCustomToken(firebase_token, function(error, authData) {
+      if (error) {
+        console.log("Firebase login failed.", error);
       } else {
-        screen.wakelock.request();
-      }
-
-      screenfull.toggle();
-    });
-
-    document.addEventListener(screenfull.raw.fullscreenchange, function() {
-      if (screenfull.isFullscreen) {
-        screen.orientation.lock('landscape');
-      } else {
-        screen.orientation.unlock();
+        var firebase_user = firebase_ref.child('users').child(authData.uid);
+        // TODO: display "waiting for data"
+        firebase_user.child('params_uri').once('value', function(data) {
+          var device = CARDBOARD.uriToParams(data.val());
+          init_with_cardboard_device(firebase_user, device);
+        });
+        // Maintain list of connections on this session
+        var firebase_connected = firebase_ref.root().child('.info/connected');
+        firebase_connected.on('value', function(is_connected) {
+          if (is_connected.val()) {
+            // TODO: have connections be list of device names
+            var entry = firebase_user.child('connections').push(true);
+            entry.onDisconnect().remove();
+          }
+        });
       }
     });
   } else {
-    // iOS
-    screen.wakelock.request();
+    console.log("URL is missing session info:", window.location);
   }
-
-  window.removeEventListener('deviceorientation', setOrientationControls, true);
 }
 
-function resize() {
-  var width = container.offsetWidth;
-  var height = container.offsetHeight;
-
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(width, height);
-  renderer.setViewport(0, 0, width, height);
-
-  composer.setSize(width, height);
-}
-
-function animate(t) {
-  var delta = clock.getDelta();
-  camera.updateProjectionMatrix();
-  controls.update(delta);
-  composer.render();
-
-  window.requestAnimationFrame(animate);
-}
-
-function checkFullscreen() {
-  var screen_width = Math.max(window.screen.width, window.screen.height);
-  var screen_height = Math.min(window.screen.width, window.screen.height);
-  if (window.document.hasFocus() &&
-      (screen_width !== window.innerWidth ||
-          screen_height !== window.innerHeight)) {
-    alert("Verify that your web browser is full screen and that Android software " +
-          "navigation keys (home, back, etc) are not visible. If the navigation keys " +
-          "are visible, install the \"GMD Full Screen Immersive Mode\" app.");
-  }
-  window.setTimeout(checkFullscreen, FULLSCREEN_CHECK_INTERVAL_MS);
-}
+init();
