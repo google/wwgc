@@ -48,25 +48,25 @@ the smartphone.
   or home buttons are not visible when viewing the VR scene:
 
   <img src="images/physical_navkeys.jpg">
-  
+
   _Physical navigation keys on Samsung Galaxy S5_
 
   If you do not have access to an Android phone with the physical navigation
   keys, download and install the [GMD Full Screen Immersive Mode](https://play.google.com/store/apps/details?id=com.gmd.immersive) app which can temporarily hide the software navigation buttons.
 
   <img src="images/gmd_fullscreen.png">
-  
+
   _Software navigation keys hidden using the GMD Full Screen Immersive Mode._
 
   2. The smartphone screen should be bigger than the total visible screen area (i.e.
 bigger than the smartphone screen facing apertures) on your viewer.
 
     * This phone’s screen is NOT large enough for viewer profile creation:
-    
+
       <img src="images/screen_too_small.png">
 
     * This phone has a large enough screen for viewer profile creation:
-    
+
       <img src="images/screen_big_enough.png">
 
 ### Step 1. Viewing the VR scene on your smartphone

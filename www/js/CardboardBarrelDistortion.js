@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-"use strict";
+ "use strict";
 
-/* globals: THREE */
+ /* globals: THREE */
 
 // Pincushion distortion function which maps from position on real screen to
 // virtual screen (i.e. texture) relative to optical center:
@@ -41,12 +41,12 @@ THREE.CardboardBarrelDistortion = {
   },
 
   vertexShader: [
-    "varying vec2 vUV;",
+  "varying vec2 vUV;",
 
-    "void main() {",
-      "vUV = uv;",
-      "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-    "}"
+  "void main() {",
+    "vUV = uv;",
+    "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+  "}"
 
   ].join("\n"),
 
@@ -63,15 +63,15 @@ THREE.CardboardBarrelDistortion = {
 
     // right projections are shifted and vertically mirrored relative to left
     "vec4 projectionRight = ",
-      "(projectionLeft + vec4(0.0, 0.0, 1.0, 0.0)) * vec4(1.0, 1.0, -1.0, 1.0);",
+    "(projectionLeft + vec4(0.0, 0.0, 1.0, 0.0)) * vec4(1.0, 1.0, -1.0, 1.0);",
     "vec4 unprojectionRight = ",
-      "(unprojectionLeft + vec4(0.0, 0.0, 1.0, 0.0)) * vec4(1.0, 1.0, -1.0, 1.0);",
+    "(unprojectionLeft + vec4(0.0, 0.0, 1.0, 0.0)) * vec4(1.0, 1.0, -1.0, 1.0);",
 
     "varying vec2 vUV;",
 
     "float poly(float val) {",
       "return (showCenter == 1 && val < 0.00005) ? ",
-          "10000.0 : 1.0 + (distortion.x + distortion.y * val) * val;",
+      "10000.0 : 1.0 + (distortion.x + distortion.y * val) * val;",
     "}",
 
     "vec2 barrel(vec2 v, vec4 projection, vec4 unprojection) {",
@@ -81,8 +81,9 @@ THREE.CardboardBarrelDistortion = {
 
     "void main() {",
       "vec2 a = (vUV.x < 0.5) ? ",
-          "barrel(vec2(vUV.x / 0.5, vUV.y), projectionLeft, unprojectionLeft) : ",
-          "barrel(vec2((vUV.x - 0.5) / 0.5, vUV.y), projectionRight, unprojectionRight);",
+      "barrel(vec2(vUV.x / 0.5, vUV.y), projectionLeft, unprojectionLeft) : ",
+      "barrel(vec2((vUV.x - 0.5) / 0.5, vUV.y), projectionRight, unprojectionRight);",
+
       "if (dividerColor.w > 0.0 && abs(vUV.x - 0.5) < .001) {",
         "gl_FragColor = dividerColor;",
       "} else if (a.x < 0.0 || a.x > 1.0 || a.y < 0.0 || a.y > 1.0) {",
@@ -92,5 +93,5 @@ THREE.CardboardBarrelDistortion = {
       "}",
     "}"
 
-  ].join("\n")
-};
+    ].join("\n")
+  };

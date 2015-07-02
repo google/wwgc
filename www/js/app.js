@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-'use strict';
+ 'use strict';
 
-/* global: angular, Firebase, gapi, qrcode, Snap, WURFL, CARDBOARD, CONFIG */
+ /* global: angular, Firebase, gapi, qrcode, Snap, WURFL, CARDBOARD, CONFIG */
 
-var QR_PIXELS_PER_CELL = 3;
+ var QR_PIXELS_PER_CELL = 3;
 
 // For QR type 5, 32 characters of usable data.
 var PARAM_QR_CUSTOM_PADDING = {
@@ -26,15 +26,15 @@ var PARAM_QR_CUSTOM_PADDING = {
   mask_override: 1,
   random_seed: 'seed5',
   pad_bytes: [
-    0x06, 0xcc, 0xcc, 0xcc, 0xcc, 0xce, 0x45, 0x6e,
-    0x57, 0x00, 0x19, 0x99, 0x99, 0x99, 0x98, 0x09,
-    0xee, 0x2c, 0xe0, 0x66, 0xc6, 0x66, 0x4e, 0x60,
-    0x14, 0xd2, 0x6e, 0x08, 0x1a, 0x9d, 0x19, 0x58,
-    0xb8, 0x0a, 0x40, 0xdd, 0x60, 0x74, 0x6a, 0x62,
-    0xe5, 0x60, 0x4d, 0x2d, 0x58, 0x88, 0x19, 0xc9,
-    0xab, 0x8d, 0x98, 0x16, 0x58, 0x1b, 0x20, 0x66,
-    0x60, 0x60, 0x66, 0x60, 0x4d, 0x46, 0xad, 0x51,
-    0xcc, 0xcd, 0x99, 0xcc, 0xcd, 0x85,
+  0x06, 0xcc, 0xcc, 0xcc, 0xcc, 0xce, 0x45, 0x6e,
+  0x57, 0x00, 0x19, 0x99, 0x99, 0x99, 0x98, 0x09,
+  0xee, 0x2c, 0xe0, 0x66, 0xc6, 0x66, 0x4e, 0x60,
+  0x14, 0xd2, 0x6e, 0x08, 0x1a, 0x9d, 0x19, 0x58,
+  0xb8, 0x0a, 0x40, 0xdd, 0x60, 0x74, 0x6a, 0x62,
+  0xe5, 0x60, 0x4d, 0x2d, 0x58, 0x88, 0x19, 0xc9,
+  0xab, 0x8d, 0x98, 0x16, 0x58, 0x1b, 0x20, 0x66,
+  0x60, 0x60, 0x66, 0x60, 0x4d, 0x46, 0xad, 0x51,
+  0xcc, 0xcd, 0x99, 0xcc, 0xcd, 0x85,
   ],
 }
 
@@ -54,8 +54,8 @@ function distortionPlot(k1, k2) {
 
   showAxes(ctx,axes);
   funGraph(ctx,axes, function(x) {
-      return 1 + k1 * Math.pow(x, 2) + k2 * Math.pow(x, 4);
-    }, "rgb(255,110,64)", 2);
+    return 1 + k1 * Math.pow(x, 2) + k2 * Math.pow(x, 4);
+  }, "rgb(255,110,64)", 2);
 }
 
 function funGraph(ctx,axes,func,color,thick) {
@@ -147,31 +147,31 @@ function initGapi() {
 }
 
 angular
-  .module('myApp', ['firebase', 'ui.bootstrap', 'ngAnimate'])
+.module('myApp', ['firebase', 'ui.bootstrap', 'ngAnimate'])
 
-  .controller('ModalCtrl', function ($scope, $modal) {
-    $scope.open = function () {
+.controller('ModalCtrl', function ($scope, $modal) {
+  $scope.open = function () {
 
-      var modalInstance = $modal.open({
-        templateUrl: 'compatibleSmartphones.html',
-        controller: 'ModalInstanceCtrl',
-        size: 'lg',
-      });
-    };
-  })
+    var modalInstance = $modal.open({
+      templateUrl: 'compatibleSmartphones.html',
+      controller: 'ModalInstanceCtrl',
+      size: 'lg',
+    });
+  };
+})
 
-  .controller('ModalInstanceCtrl', function ($scope, $modalInstance) {
-    $scope.ok = function () {
-      $modalInstance.close();
-    };
-  })
+.controller('ModalInstanceCtrl', function ($scope, $modalInstance) {
+  $scope.ok = function () {
+    $modalInstance.close();
+  };
+})
 
-  .controller('myController', ['$scope', '$firebase', '$timeout', '$q', '$window',
-    function($scope, $firebase, $timeout, $q, $window) {
-      var firebase_root = new Firebase(CONFIG.FIREBASE_URL);
+.controller('myController', ['$scope', '$firebase', '$timeout', '$q', '$window',
+  function($scope, $firebase, $timeout, $q, $window) {
+    var firebase_root = new Firebase(CONFIG.FIREBASE_URL);
 
-      var gapiDefer = $q.defer();
-      var gapiReady = gapiDefer.promise;
+    var gapiDefer = $q.defer();
+    var gapiReady = gapiDefer.promise;
 
       // TODO: use angular service
       $window.initGapi = function() {
@@ -210,7 +210,7 @@ angular
             $timeout(function() {
               var svg = svgFromImage(qr_div.firstChild, QR_PIXELS_PER_CELL);
               $scope.svg_params_qr_uri = 'data:image/svg+xml;base64,' +
-                  btoa((new XMLSerializer()).serializeToString(svg));
+              btoa((new XMLSerializer()).serializeToString(svg));
               $scope.png_params_qr_uri = qr_div.firstChild.src;
             });
           });
@@ -239,9 +239,9 @@ angular
         // support of apps using older revsion of params proto.
         // TODO: reference a defaults singleton
         if ($scope.params.vertical_alignment ===
-            DeviceParams.VerticalAlignmentType.CENTER) {
+          DeviceParams.VerticalAlignmentType.CENTER) {
           $scope.params.tray_to_lens_distance = 0.035;
-        }
+      }
         // Restore defaults for fields hidden behind "advanced" mode
         if (!$scope.data.is_advanced) {
           angular.extend($scope.params, {
@@ -261,8 +261,8 @@ angular
         $scope.data.$save();
 
         distortionPlot(
-            $scope.params.distortion_coefficients[0],
-            $scope.params.distortion_coefficients[1]);
+          $scope.params.distortion_coefficients[0],
+          $scope.params.distortion_coefficients[1]);
       };
 
       // When panel with parm QR is opened, generate the QR.  We do this
@@ -296,10 +296,10 @@ angular
           $scope.params = params;
           // infer "advanced mode" based on values
           $scope.data.is_advanced =
-            (params.primary_button != DeviceParams.ButtonType.MAGNET &&
-                params.has_magnet == true) ||
-            (params.left_eye_field_of_view_angles.toString() !=
-                [50, 50, 50, 50].toString());
+          (params.primary_button != DeviceParams.ButtonType.MAGNET &&
+            params.has_magnet == true) ||
+          (params.left_eye_field_of_view_angles.toString() !=
+            [50, 50, 50, 50].toString());
           $scope.save();
         }
       };
@@ -310,7 +310,7 @@ angular
             if (error) {
               console.log("Firebase login failed.", error);
               $scope.alerts.push({ type: 'danger',
-                  msg: 'Firebase login failed.'});
+                msg: 'Firebase login failed.'});
             }
           });
         }
@@ -324,7 +324,7 @@ angular
         $timeout(function() {
           if (authData) {
             console.log("Logged in to Firebase via provider",
-                authData.provider);
+              authData.provider);
             $scope.firebase_token = authData.token;
             var firebase_user = firebase_root.child('users').child(authData.uid);
             $scope.data = $firebase(firebase_user).$asObject();
@@ -346,7 +346,7 @@ angular
                 $timeout(function() {
                   var qr = makeQr(2, 'L', shortUrl);
                   document.getElementById('remote_qrcode').innerHTML =
-                      qr.createImgTag(QR_PIXELS_PER_CELL);
+                  qr.createImgTag(QR_PIXELS_PER_CELL);
                   $scope.short_remote_link = shortUrl;
                 });
               });
@@ -356,86 +356,86 @@ angular
             firebase_user.child('connections').on('value', function(connections) {
               if (connections.val()) {
                 if ($scope.allow_auto_advance &&
-                    $scope.wizard_step == $scope.steps.WELCOME) {
+                  $scope.wizard_step == $scope.steps.WELCOME) {
                   $scope.wizard_step = $scope.steps.INPUT;
-                }
-                $scope.allow_auto_advance = false;
-              } else {
-                $scope.allow_auto_advance = true;
-              };
-            });
+              }
+              $scope.allow_auto_advance = false;
+            } else {
+              $scope.allow_auto_advance = true;
+            };
+          });
           } else {
             console.log("Logged out of Firebase.");
             $scope.firebase_uid = null;
           }
         });
-      });
-    }])
+});
+}])
 
-  .config(function($provide) {
-    $provide.decorator("$exceptionHandler", ['$delegate', function($delegate) {
-      return function(exception, cause) {
-        $delegate(exception, cause);
-        alert("An error has occurred.\n\n" + exception.message);
-      };
-    }]);
+.config(function($provide) {
+  $provide.decorator("$exceptionHandler", ['$delegate', function($delegate) {
+    return function(exception, cause) {
+      $delegate(exception, cause);
+      alert("An error has occurred.\n\n" + exception.message);
+    };
+  }]);
+})
+
+.config(['$compileProvider', function($compileProvider) {
+  // allow data:image, for our image download links
+  $compileProvider.aHrefSanitizationWhitelist(
+    /^\s*((https?|ftp|mailto|tel|file):|data:image\/)/);
+}])
+
+// Scale model-to-view by given factor and vice versa.
+.directive('myScale',
+  function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, elem, attrs, ngModel) {
+        var scale = parseInt(attrs.myScale);
+        // model-to-view
+        ngModel.$formatters.push(
+          function(val) {
+            if (val) {
+              return val * scale;
+            }
+          });
+        // view-to-model
+        ngModel.$parsers.push(
+          function (val) {
+            var parsed = parseFloat(val);
+            if (isNaN(parsed)) return null;
+            return parsed / scale;
+          });
+      }
+    };
   })
 
-  .config(['$compileProvider', function($compileProvider) {
-    // allow data:image, for our image download links
-    $compileProvider.aHrefSanitizationWhitelist(
-        /^\s*((https?|ftp|mailto|tel|file):|data:image\/)/);
-  }])
+// Round view of numeric value to given fractional digits.
+.directive('roundView',
+  function() {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      link: function(scope, elem, attrs, ngModel) {
+        var fraction_digits = parseInt(attrs.roundView);
+        // model-to-view
+        // Can't use a formatter here since we want full fixed point display
+        // (e.g. 0 rendered as "0.00").
+        ngModel.$render = function() {
+          if (ngModel.$isEmpty(ngModel.$viewValue)) {
+            elem.val('');
+          } else {
+            elem.val(Number(ngModel.$viewValue).toFixed(fraction_digits));
+          }
+        };
+        ngModel.$viewChangeListeners.push(function() {
+          ngModel.$render();
+        });
+      }
+    };
+  })
 
-  // Scale model-to-view by given factor and vice versa.
-  .directive('myScale',
-    function() {
-      return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elem, attrs, ngModel) {
-          var scale = parseInt(attrs.myScale);
-          // model-to-view
-          ngModel.$formatters.push(
-            function(val) {
-              if (val) {
-                return val * scale;
-              }
-            });
-          // view-to-model
-          ngModel.$parsers.push(
-            function (val) {
-              var parsed = parseFloat(val);
-              if (isNaN(parsed)) return null;
-              return parsed / scale;
-            });
-        }
-      };
-    })
-
-  // Round view of numeric value to given fractional digits.
-  .directive('roundView',
-    function() {
-      return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elem, attrs, ngModel) {
-          var fraction_digits = parseInt(attrs.roundView);
-          // model-to-view
-          // Can't use a formatter here since we want full fixed point display
-          // (e.g. 0 rendered as "0.00").
-          ngModel.$render = function() {
-            if (ngModel.$isEmpty(ngModel.$viewValue)) {
-              elem.val('');
-            } else {
-              elem.val(Number(ngModel.$viewValue).toFixed(fraction_digits));
-            }
-          };
-          ngModel.$viewChangeListeners.push(function() {
-            ngModel.$render();
-          });
-        }
-      };
-    })
-
-  ;
+;

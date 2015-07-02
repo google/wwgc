@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-"use strict";
+ "use strict";
 
-/* globals: CARDBOARD, WURFL, THREE */
+ /* globals: CARDBOARD, WURFL, THREE */
 
-CARDBOARD.CardboardView = function(screen_params, device_params) {
+ CARDBOARD.CardboardView = function(screen_params, device_params) {
   this.screen = screen_params;
   this.device = device_params;
 };
@@ -31,14 +31,14 @@ CARDBOARD.CardboardView.prototype = {
     var distortion = this.distortion;
 
     // The screen-to-lens distance can be used as a rough approximation
-    // of the virtual-eye-to-screen distance. 
+    // of the virtual-eye-to-screen distance.
     var eyeToScreenDist = cdp.screen_to_lens_distance;
-  
+
     var outerDist = (screen.width_meters - cdp.inter_lens_distance) / 2;
     var innerDist =  cdp.inter_lens_distance / 2;
     var bottomDist = CARDBOARD.getYEyeOffsetMeters(screen, cdp);
     var topDist = screen.height_meters - bottomDist;
-  
+
     var outerAngle = THREE.Math.radToDeg(Math.atan(
         distortion.distort(outerDist / eyeToScreenDist)));
     var innerAngle = THREE.Math.radToDeg(Math.atan(
@@ -47,7 +47,7 @@ CARDBOARD.CardboardView.prototype = {
         distortion.distort(bottomDist / eyeToScreenDist)));
     var topAngle = THREE.Math.radToDeg(Math.atan(
         distortion.distort(topDist / eyeToScreenDist)));
-  
+
     var maxFov = cdp.left_eye_field_of_view_angles;  // L, R, T, B
 
     return {
@@ -64,41 +64,41 @@ CARDBOARD.CardboardView.prototype = {
     var distortion = this.distortion;
 
     // The screen-to-lens distance can be used as a rough approximation
-    // of the virtual-eye-to-screen distance. 
+    // of the virtual-eye-to-screen distance.
     var eyeToScreenDist = cdp.screen_to_lens_distance;
     var halfLensDistance = cdp.inter_lens_distance / 2 / eyeToScreenDist;
     var screenWidth = screen.width_meters / eyeToScreenDist;
     var screenHeight = screen.height_meters / eyeToScreenDist;
     var xPxPerTanAngle = screen.width / screenWidth;
     var yPxPerTanAngle = screen.height / screenHeight;
-  
+
     var eyePosX = screenWidth / 2 - halfLensDistance;
     var eyePosY = CARDBOARD.getYEyeOffsetMeters(screen, cdp) / eyeToScreenDist;
-  
+
     var maxFov = cdp.left_eye_field_of_view_angles;  // L, R, T, B
     var outerDist = Math.min(eyePosX, distortion.distortInverse(
-        Math.tan(THREE.Math.degToRad(maxFov[0]))));
+      Math.tan(THREE.Math.degToRad(maxFov[0]))));
     var innerDist = Math.min(halfLensDistance, distortion.distortInverse(
-        Math.tan(THREE.Math.degToRad(maxFov[1]))));
+      Math.tan(THREE.Math.degToRad(maxFov[1]))));
     var bottomDist = Math.min(eyePosY, distortion.distortInverse(
-        Math.tan(THREE.Math.degToRad(maxFov[3]))));
+      Math.tan(THREE.Math.degToRad(maxFov[3]))));
     var topDist = Math.min(screenHeight - eyePosY, distortion.distortInverse(
-        Math.tan(THREE.Math.degToRad(maxFov[2]))));
-  
+      Math.tan(THREE.Math.degToRad(maxFov[2]))));
+
     var result = { fov: {}, viewport: {} };
-  
+
     result.fov.left = THREE.Math.radToDeg(Math.atan(outerDist));
     result.fov.right = THREE.Math.radToDeg(Math.atan(innerDist));
     result.fov.bottom = THREE.Math.radToDeg(Math.atan(bottomDist));
     result.fov.top = THREE.Math.radToDeg(Math.atan(topDist));
-  
+
     result.viewport.x = Math.round((eyePosX - outerDist) * xPxPerTanAngle);
     result.viewport.width = Math.round((eyePosX + innerDist) * xPxPerTanAngle)
-        - result.viewport.x;
+    - result.viewport.x;
     result.viewport.y = Math.round((eyePosY - bottomDist) * yPxPerTanAngle);
     result.viewport.height = Math.round((eyePosY + topDist) * yPxPerTanAngle)
-        - result.viewport.y;
-  
+    - result.viewport.y;
+
     return result;
   },
 };
@@ -111,7 +111,7 @@ Object.defineProperties(CARDBOARD.CardboardView.prototype, {
     set: function(value) {
       this._device = value;
       this.distortion = new CARDBOARD.DistortionParams(
-          value.distortion_coefficients);
+        value.distortion_coefficients);
     },
   },
 });
@@ -140,20 +140,20 @@ Object.defineProperties(CARDBOARD.ScreenParams.prototype, {
 
 // Returns Y offset from bottom of given physical screen to lens center.
 CARDBOARD.getYEyeOffsetMeters = function(screen_params, device_params) {
-    var VerticalAlignmentType =
-        CARDBOARD.DeviceParams.VerticalAlignmentType;
-    switch (device_params.vertical_alignment) {
-      default:
-      case VerticalAlignmentType.CENTER:
-        return screen_params.height_meters / 2;
-      case VerticalAlignmentType.BOTTOM:
-        return device_params.tray_to_lens_distance -
-            screen_params.border_size_meters;
-      case VerticalAlignmentType.TOP:
-        return screen_params.height_meters -
-            (device_params.tray_to_lens_distance -
-                screen_params.border_size_meters);
-    }
+  var VerticalAlignmentType =
+  CARDBOARD.DeviceParams.VerticalAlignmentType;
+  switch (device_params.vertical_alignment) {
+    default:
+    case VerticalAlignmentType.CENTER:
+    return screen_params.height_meters / 2;
+    case VerticalAlignmentType.BOTTOM:
+    return device_params.tray_to_lens_distance -
+    screen_params.border_size_meters;
+    case VerticalAlignmentType.TOP:
+    return screen_params.height_meters -
+    (device_params.tray_to_lens_distance -
+      screen_params.border_size_meters);
+  }
 };
 
 CARDBOARD.DistortionParams = function(coefficients) {
@@ -202,15 +202,15 @@ CARDBOARD.getProjectionMatrixPair = function(left_fov_angles, near, far) {
 
   return {
     left:
-        new THREE.Matrix4().makeFrustum(-outer, inner, -bottom, top, near, far),
+    new THREE.Matrix4().makeFrustum(-outer, inner, -bottom, top, near, far),
     right:
-        new THREE.Matrix4().makeFrustum(-inner, outer, -bottom, top, near, far),
+    new THREE.Matrix4().makeFrustum(-inner, outer, -bottom, top, near, far),
   };
 };
 
 // Set barrel_distortion parameters given CardboardView.
 CARDBOARD.updateBarrelDistortion = function(barrel_distortion, cardboard_view,
-    camera_near, camera_far, show_center) {
+  camera_near, camera_far, show_center) {
   var coefficients = cardboard_view.device.distortion_coefficients;
   // Shader params include parts of the projection matrices needed to
   // convert texture coordinates between distorted and undistorted
@@ -219,29 +219,29 @@ CARDBOARD.updateBarrelDistortion = function(barrel_distortion, cardboard_view,
   // viewport on the screen.
   // TODO: have explicit viewport transform in shader for simplicity
   var projections = CARDBOARD.getProjectionMatrixPair(
-      cardboard_view.getLeftEyeFov(), camera_near, camera_far);
+    cardboard_view.getLeftEyeFov(), camera_near, camera_far);
   barrel_distortion.uniforms.distortion.value
-      .set(coefficients[0], coefficients[1]);
+  .set(coefficients[0], coefficients[1]);
   var elements = projections.left.elements;
   barrel_distortion.uniforms.projectionLeft.value
-      .set(elements[4*0 + 0], elements[4*1 + 1],
-           elements[4*2 + 0] - 1, elements[4*2 + 1] - 1)
-      .divideScalar(2);
+  .set(elements[4*0 + 0], elements[4*1 + 1],
+   elements[4*2 + 0] - 1, elements[4*2 + 1] - 1)
+  .divideScalar(2);
   var no_lens_view = cardboard_view.getLeftEyeFovAndViewportNoDistortionCorrection();
   var viewport = no_lens_view.viewport;
   var unprojections = CARDBOARD.getProjectionMatrixPair(
-      no_lens_view.fov, camera_near, camera_far);
+    no_lens_view.fov, camera_near, camera_far);
   elements = unprojections.left.elements;
   var x_scale = viewport.width / (cardboard_view.screen.width / 2);
   var y_scale = viewport.height / cardboard_view.screen.height;
   var x_trans = 2 * (viewport.x + viewport.width / 2) /
-      (cardboard_view.screen.width / 2) - 1;
+  (cardboard_view.screen.width / 2) - 1;
   var y_trans = 2 * (viewport.y + viewport.height / 2) /
-      cardboard_view.screen.height - 1;
+  cardboard_view.screen.height - 1;
   barrel_distortion.uniforms.unprojectionLeft.value
-      .set(elements[4*0 + 0] * x_scale, elements[4*1 + 1] * y_scale,
-           elements[4*2 + 0] - 1 - x_trans, elements[4*2 + 1] - 1 - y_trans)
-      .divideScalar(2);
+  .set(elements[4*0 + 0] * x_scale, elements[4*1 + 1] * y_scale,
+   elements[4*2 + 0] - 1 - x_trans, elements[4*2 + 1] - 1 - y_trans)
+  .divideScalar(2);
   barrel_distortion.uniforms.showCenter.value = show_center ? 1 : 0;
 };
 
@@ -275,37 +275,37 @@ CARDBOARD.findScreenParams = function() {
     for (var device_name in CARDBOARD.SCREEN_PPI_BY_DEVICE) {
       var ppi_entry = CARDBOARD.SCREEN_PPI_BY_DEVICE[device_name];
       if (ppi_entry.length > 1 &&
-          WURFL.complete_device_name.match(ppi_entry[1])) {
+        WURFL.complete_device_name.match(ppi_entry[1])) {
         ppi = ppi_entry[0];
-        console.log('Detected', device_name);
-        break;
+      console.log('Detected', device_name);
+      break;
+    }
+  }
+}
+if (WURFL.is_mobile) {
+  if (!ppi) {
+    console.log('Mobile device display properties unknown:',
+      WURFL.complete_device_name);
+    ppi = Number(_readCookie('ppi'));
+    if (ppi > 0) {
+      console.log('PPI from cookie:', ppi);
+    } else {
+      ppi = Number(window.prompt("Mobile device display properties " +
+        "unknown. Enter pixels per inch (PPI) value of your device:"));
+      if (ppi > 0) {
+        _createCookie(window.location.pathname, 'ppi', ppi, 9999);
+      } else {
+        ppi = 300;
       }
     }
   }
-  if (WURFL.is_mobile) {
-    if (!ppi) {
-      console.log('Mobile device display properties unknown:',
-          WURFL.complete_device_name);
-      ppi = Number(_readCookie('ppi'));
-      if (ppi > 0) {
-        console.log('PPI from cookie:', ppi);
-      } else {
-        ppi = Number(window.prompt("Mobile device display properties " +
-            "unknown. Enter pixels per inch (PPI) value of your device:"));
-        if (ppi > 0) {
-          _createCookie(window.location.pathname, 'ppi', ppi, 9999);
-        } else {
-          ppi = 300;
-        }
-      }
-    }
-    var screen_width = Math.max(window.screen.width, window.screen.height) *
-        window.devicePixelRatio;
-    var screen_height = Math.min(window.screen.width, window.screen.height) *
-        window.devicePixelRatio;
-    return new CARDBOARD.ScreenParams(screen_width, screen_height, ppi,
-        0.003 /*bezel height*/);
-  } else {
+  var screen_width = Math.max(window.screen.width, window.screen.height) *
+  window.devicePixelRatio;
+  var screen_height = Math.min(window.screen.width, window.screen.height) *
+  window.devicePixelRatio;
+  return new CARDBOARD.ScreenParams(screen_width, screen_height, ppi,
+    0.003 /*bezel height*/);
+} else {
     // generic values for desktop
     return new CARDBOARD.ScreenParams(1920, 1080, 445, 0);
   }
@@ -315,8 +315,8 @@ function _createCookie(path, name, value, days) {
   var date = new Date();
   date.setTime(date.getTime()+(days*24*60*60*1000));
   document.cookie = name+"="+value+
-      "; expires="+date.toGMTString()+
-      "; path="+path;
+  "; expires="+date.toGMTString()+
+  "; path="+path;
 }
 
 function _readCookie(name) {

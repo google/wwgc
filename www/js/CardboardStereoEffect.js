@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-"use strict";
+ "use strict";
 
-/* globals: THREE, CARDBOARD */
+ /* globals: THREE, CARDBOARD */
 
-THREE.CardboardStereoEffect = function (
-    cardboard_view, scene, camera, overrideMaterial, clearColor, clearAlpha ) {
+ THREE.CardboardStereoEffect = function (
+  cardboard_view, scene, camera, overrideMaterial, clearColor, clearAlpha ) {
 
   this.cardboard_view = cardboard_view;
   this.scene = scene;
@@ -92,7 +92,7 @@ THREE.CardboardStereoEffect = function (
     scene.updateMatrixWorld();
 
     if ( camera.parent === undefined ) camera.updateMatrixWorld();
-  
+
     camera.matrixWorld.decompose( _position, _quaternion, _scale );
 
     this.eyeSeparation = this.cardboard_view.device.inter_lens_distance;
@@ -117,7 +117,7 @@ THREE.CardboardStereoEffect = function (
 
     // Viewport can be changed during setRenderTarget call
     // (which gets called from render() function).  Bug?
-    renderer.setRenderTarget(readBuffer); 
+    renderer.setRenderTarget(readBuffer);
 
     renderer.setScissor( 0, 0, _width, _height);
     renderer.setViewport( 0, 0, _width, _height);
