@@ -169,10 +169,10 @@ Choose <strong>Center</strong> if the center of the smartphone screen is always 
 
 If you choose <strong>Bottom</strong> or <strong>Top</strong>, measure the tray to lens-center distance from the top or bottom of your viewer planes respectively and enter it into the "Tray to lens-center distance (mm)" field.
 
-<img src="images/trey_to_lens_distance_top.png" width="572">
+<img src="images/tray_to_lens_distance_top.png" width="258">
 _What you're measuring when you choose <strong>Top</strong>_
 
-<img src="images/trey_to_lens_distance_bottom.png" width="572">
+<img src="images/tray_to_lens_distance_bottom.png" width="258">
 _What you're measuring when you choose <strong>Bottom</strong>_
 
 Use your VR headset to ensure that you have entered the screen vertical distance correctly. Check to see if the red markers appear in the vertical center of the visible field-of-view.
