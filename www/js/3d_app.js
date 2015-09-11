@@ -17,7 +17,7 @@
 'use strict';
 
 /*global alert, document, screen, window, init,
-  THREE, Firebase, screenfull, CARDBOARD, CONFIG, ga*/
+  THREE, WURFL, Firebase, screenfull, CARDBOARD, CONFIG, ga*/
 
 // meter units
 var CAMERA_HEIGHT = 0;
@@ -35,9 +35,9 @@ if (!screenfull.enabled) {
   document.getElementById("title").innerHTML = "Rotate phone horizontally";
 }
 
-function setMessageVisible(is_visible) {
+function setMessageVisible(id, is_visible) {
   var css_visibility = is_visible ? "block" : "none";
-  document.getElementById("message").style.display = css_visibility;
+  document.getElementById(id).style.display = css_visibility;
 }
 
 function isFullscreen() {
@@ -61,7 +61,9 @@ function resize() {
 
   composer.setSize(width, height);
 
-  setMessageVisible(!isFullscreen());
+  if (WURFL.is_mobile) {
+    setMessageVisible('message_fullscreen', !isFullscreen());
+  }
 }
 
 function animate(t) {
@@ -202,7 +204,22 @@ function init_with_cardboard_device(firebase, cardboard_device) {
   animate();
 }
 
+function hasWebGl() {
+  var canvas = document.createElement("canvas");
+  try {
+    return Boolean(canvas.getContext("webgl") ||
+                   canvas.getContext("experimental-webgl"));
+  } catch (x) {
+    return false;
+  }
+}
+
 function init() {
+  if (!hasWebGl()) {
+    console.log('WebGL not available');
+    setMessageVisible('message_webgl', true);
+    return;
+  }
   var firebase_token = window.location.hash.replace(/^#/, '');
   if (firebase_token) {
     var firebase_ref = new Firebase(CONFIG.FIREBASE_URL);

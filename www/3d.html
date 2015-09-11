@@ -36,7 +36,7 @@
         bottom: 0;
         z-index: -1;
       }
-      #message {
+      .message {
         position: absolute;
         top: 0;
         left: 0;
@@ -65,12 +65,24 @@
     </style>
   </head>
   <body>
-    <div id="message">
+    <div class="message" id="message_fullscreen" style="display: none">
       <table border="0">
         <tr>
           <td>
             <h1 id="title">Tap your screen</h1>
             <p>After entering the full screen mode, place your phone in the viewer.<p><br/>
+            <img src="images/header-phone.png">
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="message" id="message_webgl" style="display: none">
+      <table border="0">
+        <tr>
+          <td>
+            <h1 id="title">Sorry, this phone is not supported</h1>
+            <p>Please use a phone that supports WebGL.  Recommended
+               devices are Nexus 6 or iPhone 6 Plus.<p><br/>
             <img src="images/header-phone.png">
           </td>
         </tr>
