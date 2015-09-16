@@ -216,9 +216,12 @@ function areArraysEqual(arr1, arr2) {
 }
 
 function initGapi() {
-  // TODO: remove this busywait hack (i.e. where we keep calling ourself until
-  // angular module init overrides the function).
-  window.initGapi();
+  if (window.initGapi2) {
+    window.initGapi2();
+  } else {
+    // wait for angular controller init
+    window.setTimeout(initGapi, 500);
+  }
 }
 
 if (CONFIG.GOOGLE_ANALYTICS_ID) {
@@ -343,8 +346,9 @@ angular
     var gapiReady = gapiDefer.promise;
 
       // TODO: use angular service
-      $window.initGapi = function() {
+      $window.initGapi2 = function() {
         gapi.client.setApiKey(CONFIG.GOOGLE_API_KEY);
+        // TODO: propagate API load error
         gapi.client.load('urlshortener', 'v1').then(function() {
           gapiDefer.resolve();
         });

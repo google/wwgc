@@ -109,6 +109,7 @@ function setOrientationControls(e) {
 
     document.addEventListener(screenfull.raw.fullscreenchange, function() {
       if (screenfull.isFullscreen) {
+        // TODO: moz prefix for Firefox
         screen.orientation.lock('landscape');
       } else {
         screen.orientation.unlock();
