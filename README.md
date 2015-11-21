@@ -7,7 +7,8 @@ You can use this tool if you're creating a Google Cardboard-inspired device
 with different optics, inputs or dimensions.
 
 [Open the running version of the tool](https://www.google.com/get/cardboard/viewerprofilegenerator.html)
-or read the [user guide](docs/HELP.md) for more information.
+or read the [user guide](https://support.google.com/cardboard/manufacturers/checklist/6322188)
+for more information.
 
 <img src="docs/images/wwgc_screenshot.png">
 

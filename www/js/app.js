@@ -43,52 +43,52 @@ var HELPER_PARAMETER_MODAL = {
   'vendor': {
     focus: 'vendor',
     title: 'Enter your company\'s name',
-    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'model': {
     focus: 'vendor',
     title: 'Enter viewer name. It will be visible to users.',
-    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p><strong>Note:</strong> This name will be shown in all apps which work with Google Cardboard after completing the viewer pairing&nbsp;flow.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'primary_button': {
     focus: 'vendor',
     title: 'Primary Button&nbsp;Type',
-    content: '<p><em>None</em> if your device has no inputs and the smartphone screen is not accessible or if your device has a separate Bluetooth controller and no other built&#45;in&nbsp;inputs.</p><p><em>Touch</em> if your device has no inputs, but the user can touch the screen with his/her finger without taking the phone out of the&nbsp;viewer.</p><p><em>Indirect Touch</em> if your device has a mechanical input which is ultimately registered as a screen touch, but the user&rsquo;s finger is not touching the screen&nbsp;directly.</p><p><em>Magnet</em> if your device has a Google Cardboard&#45;like magnetic&nbsp;input.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p><em>None</em> if your device has no inputs and the smartphone screen is not accessible or if your device has a separate Bluetooth controller and no other built&#45;in&nbsp;inputs.</p><p><em>Touch</em> if your device has no inputs, but the user can touch the screen with his/her finger without taking the phone out of the&nbsp;viewer.</p><p><em>Indirect Touch</em> if your device has a mechanical input which is ultimately registered as a screen touch, but the user&rsquo;s finger is not touching the screen&nbsp;directly.</p><p><em>Magnet</em> if your device has a Google Cardboard&#45;like magnetic&nbsp;input.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'screen_to_lens_distance': {
     focus: 'vendor',
     title: 'Screen to lens distance&nbsp;(mm)',
-    content: '<img src="images/screen-to-lens.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable focal distance, measure the average distance between the screen and the&nbsp;lenses.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<img src="images/screen-to-lens.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable focal distance, measure the average distance between the screen and the&nbsp;lenses.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'inter_lens_distance': {
     focus: 'vendor',
     title: 'Inter&#45;lens distance&nbsp;(mm)',
-    content: '<img src="images/interlens-distance.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable inter-lens distance, measure the average distance between the screen and the&nbsp;lenses. </p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<img src="images/interlens-distance.png" height="638" width="786" class="img-responsive" alt=" " /><p><strong>Note:</strong> If your viewer comes with an adjustable inter-lens distance, measure the average distance between the screen and the&nbsp;lenses. </p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'vertical_alignment': {
     focus: 'vendor',
     title: 'Screen vertical&nbsp;alignment',
-    content: '<p><strong>Note:</strong> Indicate if the smartphone screen is aligned to the top, bottom or center of your viewer when the smartphone is inserted. For most viewers, this should be set to BOTTOM.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p><strong>Note:</strong> Indicate if the smartphone screen is aligned to the top, bottom or center of your viewer when the smartphone is inserted. For most viewers, this should be set to BOTTOM.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'tray_to_lens_distance': {
     focus: 'vendor',
     title: 'Tray to lens&#45;center distance&nbsp;(mm)',
-    content: '<p><strong>Bottom:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.BOTTOM" class="img-responsive" width="596" height="423" src="images/tray_to_lens_distance_bottom.png" alt=" " /><p><strong>Top:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.TOP" class="img-responsive" width="597" height="425" src="images/tray_to_lens_distance_top.png" alt=" " /></p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p><strong>Bottom:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.BOTTOM" class="img-responsive" width="596" height="423" src="images/tray_to_lens_distance_bottom.png" alt=" " /><p><strong>Top:</strong></p><img ng-if="params.vertical_alignment == vertical_alignment_type.TOP" class="img-responsive" width="597" height="425" src="images/tray_to_lens_distance_top.png" alt=" " /></p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'distortion_coefficients': {
     focus: 'vendor',
     title: 'Distortion Coefficients',
-    content: '<p>View the lens calibration VR scene which appears on your smartphone. Adjust the data until the vertical lines appear straight and angles appear right (90 degrees) through your viewer&nbsp;lenses.</p><div class="hide-in-modal"><p>This is the current lens curvature for your distortion&nbsp;coefficients:</p><p class="text-center"><div id="canvas-container"><canvas id="distortion_plot" width="140" height="280" style="width:auto; height: 100%;"></canvas></div></p></div><p><strong>Note:</strong> distortion coefficients should not be left set to 0.00 for any curved lens.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p>View the lens calibration VR scene which appears on your smartphone. Adjust the data until the vertical lines appear straight and angles appear right (90 degrees) through your viewer&nbsp;lenses.</p><div class="hide-in-modal"><p>This is the current lens curvature for your distortion&nbsp;coefficients:</p><p class="text-center"><div id="canvas-container"><canvas id="distortion_plot" width="140" height="280" style="width:auto; height: 100%;"></canvas></div></p></div><p><strong>Note:</strong> distortion coefficients should not be left set to 0.00 for any curved lens.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'left_eye_field_of_view_angles': {
     focus: 'vendor',
     title: 'Field-of-view angle',
-    content: '<p>Enter the field-of-view angles for your left lens. For most viewers these fields should be set to 50 degrees or&nbsp;more.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p>Enter the field-of-view angles for your left lens. For most viewers these fields should be set to 50 degrees or&nbsp;more.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
   'has_magnet': {
     focus: 'vendor',
     title: 'Embeded Magnets',
-    content: '<p>Select this checkbox if your viewer has at least one embedded magnet. Doing so will inform all apps built using the Cardboard SDKs that the smartphone&rsquo;s magnetometer should not be&nbsp;used.</p><p class="help"><a href="https://github.com/google/wwgc/blob/master/docs/HELP.md" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
+    content: '<p>Select this checkbox if your viewer has at least one embedded magnet. Doing so will inform all apps built using the Cardboard SDKs that the smartphone&rsquo;s magnetometer should not be&nbsp;used.</p><p class="help"><a href="https://support.google.com/cardboard/manufacturers/checklist/6322188" target="_blank">Help &nbsp;<img src="images/help-invert.png" height="19" width="19" alt="?" /><paper-ripple></paper-ripple></a></p>',
   },
 };
 
