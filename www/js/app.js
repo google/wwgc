@@ -338,34 +338,45 @@ angular
   };
 })
 
-.controller('myController', ['$scope', '$firebase', '$timeout', '$q', '$window', '$mdDialog',
-  function($scope, $firebase, $timeout, $q, $window, $mdDialog) {
-    var firebase_root = new Firebase(CONFIG.FIREBASE_URL);
+.controller('myController', ['$scope', '$firebaseObject', '$timeout', '$q', '$window', '$mdDialog',
+  function($scope, $firebaseObject, $timeout, $q, $window, $mdDialog) {
+      var config = {
+        apiKey: CONFIG.GOOGLE_API_KEY,
+        authDomain: CONFIG.FIREBASE_APP_URL,
+        databaseURL: CONFIG.FIREBASE_DB_URL
+      };
+      firebase.initializeApp(config);
 
-    var gapiDefer = $q.defer();
-    var gapiReady = gapiDefer.promise;
+      var firebase_root = firebase.database().ref();
+
+      var gapiDefer = $q.defer();
+      var gapiReady = gapiDefer.promise;
 
       // TODO: use angular service
       $window.initGapi2 = function() {
         gapi.client.setApiKey(CONFIG.GOOGLE_API_KEY);
         // TODO: propagate API load error
-        gapi.client.load('urlshortener', 'v1').then(function() {
-          gapiDefer.resolve();
-        });
       };
 
       // Returns promise for shortUrl string.
       var getShortUrl = function(longUrl) {
         return new $q(function(resolve, reject) {
-          gapiReady.then(function() {
-            gapi.client.urlshortener.url.insert({
-              'longUrl': longUrl,
-            }).then(function(response) {
-              resolve(response.result.id);
-            }, function(reason) {
-              console.log('Short URL error: ' + reason.result.error.message);
-              reject(reason.result.error);
-            });
+          var params = {
+            "longDynamicLink": CONFIG.DYNAMIC_URL_BASE + "/?link=" + longUrl,
+            "suffix": {
+              "option": "SHORT"
+            }
+          };
+
+          $.post({
+            url: 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + CONFIG.GOOGLE_API_KEY,
+            data: JSON.stringify(params),
+            contentType: "application/json"}
+          ).then(function (response) {
+            resolve(response.shortLink);
+          }).catch(function (err) {
+            console.log('Short URL error: ' + err.responseText);
+            reject(reason.result.error);
           });
         });
       };
@@ -487,7 +498,7 @@ angular
           $scope.has_magnet_field_enabled = true;
         }
 
-        $scope.data.update_timestamp = Firebase.ServerValue.TIMESTAMP;
+        $scope.data.update_timestamp = firebase.database.ServerValue.TIMESTAMP;
         $scope.data.params_uri = CARDBOARD.paramsToUri($scope.params);
         $scope.data.$save();
 
@@ -564,30 +575,29 @@ angular
         }
       };
 
-      $timeout(function () {
-        if (!firebase_root.getAuth()) {
-          firebase_root.authAnonymously(function(error, authData) {
+      firebase.auth().onAuthStateChanged(function(authData) {
+        if (!authData) {
+          firebase.auth().signInAnonymously().catch(function(error) {
             if (error) {
               console.log("Firebase login failed.", error);
               $scope.alerts.push({ type: 'danger',
                 msg: 'Firebase login failed.'});
             }
           });
-        }
-      });
 
-      firebase_root.onAuth(function(authData) {
+          return;
+        }
         // Note that onAuth will call given function immediately if user is
         // already authenticated.  Use $timeout to ensure we consistently
         // run within digest loop.
         // TODO: use angularfire $onAuth
         $timeout(function() {
           if (authData) {
-            console.log("Logged in to Firebase via provider",
-              authData.provider);
-            $scope.firebase_token = authData.token;
+            console.log("Logged in to Firebase via provider");
+
+            $scope.firebase_token = authData.uid;
             var firebase_user = firebase_root.child('users').child(authData.uid);
-            $scope.data = $firebase(firebase_user).$asObject();
+            $scope.data = $firebaseObject(firebase_user);
             // init form data on initial load
             // TODO: listen for out-of-band changes to params_uri
             $scope.data.$loaded().then(function(data) {
@@ -611,19 +621,20 @@ angular
                 });
               });
             });
+
             // Manage auto-advance from welcome step once remote scene paired.
             // Advance only allowed when starting from no active connections.
             firebase_user.child('connections').on('value', function(connections) {
-              if (connections.val()) {
-                if ($scope.allow_auto_advance &&
-                  $scope.wizard_step === $scope.steps.WELCOME) {
-                  $scope.wizard_step = $scope.steps.WELCOME;
+                if (connections.val()) {
+                  if ($scope.allow_auto_advance &&
+                    $scope.wizard_step === $scope.steps.WELCOME) {
+                    $scope.wizard_step = $scope.steps.WELCOME;
+                }
+                $scope.allow_auto_advance = false;
+              } else {
+                $scope.allow_auto_advance = true;
               }
-              $scope.allow_auto_advance = false;
-            } else {
-              $scope.allow_auto_advance = true;
-            }
-          });
+            });
           } else {
             console.log("Logged out of Firebase.");
           }

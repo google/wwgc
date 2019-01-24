@@ -32,9 +32,10 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.11/seedrandom.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
-  <script src="//cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
-  <script src="//cdn.firebase.com/libs/angularfire/0.9.1/angularfire.min.js"></script>
+  <script src="//www.gstatic.com/firebasejs/5.8.0/firebase.js"></script>
+  <script src="//cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
   <script src="//wurfl.io/wurfl.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -142,7 +143,7 @@
               <div class="col-md-4 step-two">
                 <span class="num">2</span>
                 <p>Use your phone and open the URL or scan the QR code&nbsp;below.</p>
-                <a ng-hide="true" ng-href="3d.html#{{firebase_token}}" id="remote_link"></a>
+                <a ng-hide="true" ng-href="3d.html?u={{firebase_token}}" id="remote_link"></a>
                 <p>&nbsp;</p>
                 <a ng-href="{{short_remote_link}}">{{short_remote_link}}</a>
                 <p>&nbsp;</p>
