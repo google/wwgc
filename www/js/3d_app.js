@@ -221,28 +221,31 @@ function init() {
     setMessageVisible('message_webgl', true);
     return;
   }
-  var firebase_token = window.location.hash.replace(/^#/, '');
+  var urlParams = new URLSearchParams(window.location.search);
+  var firebase_token = urlParams.get('u');
   if (firebase_token) {
-    var firebase_ref = new Firebase(CONFIG.FIREBASE_URL);
-    firebase_ref.authWithCustomToken(firebase_token, function(error, authData) {
-      if (error) {
-        console.log("Firebase login failed.", error);
-      } else {
-        var firebase_user = firebase_ref.child('users').child(authData.uid);
-        // TODO: display "waiting for data"
-        firebase_user.child('params_uri').once('value', function(data) {
-          var device = CARDBOARD.uriToParams(data.val());
-          init_with_cardboard_device(firebase_user, device);
-        });
-        // Maintain list of connections on this session
-        var firebase_connected = firebase_ref.root().child('.info/connected');
-        firebase_connected.on('value', function(is_connected) {
-          if (is_connected.val()) {
-            // TODO: have connections be list of device names
-            var entry = firebase_user.child('connections').push(true);
-            entry.onDisconnect().remove();
-          }
-        });
+    var config = {
+      apiKey: CONFIG.GOOGLE_API_KEY,
+      authDomain: CONFIG.FIREBASE_APP_URL,
+      databaseURL: CONFIG.FIREBASE_DB_URL
+    };
+    firebase.initializeApp(config);
+
+    var firebase_ref = firebase.database().ref();
+
+    var firebase_user = firebase_ref.child('users').child(firebase_token);
+    // TODO: display "waiting for data"
+    firebase_user.child('params_uri').once('value', function(data) {
+      var device = CARDBOARD.uriToParams(data.val());
+      init_with_cardboard_device(firebase_user, device);
+    });
+    // Maintain list of connections on this session
+    var firebase_connected = firebase_ref.child('.info/connected');
+    firebase_connected.on('value', function(is_connected) {
+      if (is_connected.val()) {
+        // TODO: have connections be list of device names
+        var entry = firebase_user.child('connections').push(true);
+        entry.onDisconnect().remove();
       }
     });
   } else {
